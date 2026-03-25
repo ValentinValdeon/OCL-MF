@@ -589,7 +589,17 @@
       font-variant-emoji: text;
     }
 
-    .callout-body { flex: 1; min-width: 0; }
+    .callout-body {
+      flex: 1;
+      min-width: 0;
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+
+    .callout-body code {
+      word-break: break-all;
+      overflow-wrap: anywhere;
+    }
 
     .callout-title {
       font-weight: 700;
@@ -605,7 +615,37 @@
 
     .callout-body p:last-child { margin-bottom: 0; }
 
+    .callout-body ol,
+    .callout-body ul {
+      padding-left: 1.25rem;
+      margin-bottom: 0;
+    }
+
+    .callout-body li {
+      font-size: .9rem;
+      margin-bottom: .4rem;
+      line-height: 1.55;
+    }
+
+    .callout-body li:last-child { margin-bottom: 0; }
+
+    @media (max-width: 768px) {
+      .callout {
+        padding: .75rem 1rem;
+        gap: .5rem;
+      }
+      .callout-icon {
+        font-size: 1rem;
+      }
+    }
+
     /* Variants */
+    .callout {
+      border-color: var(--border-strong);
+      background: rgba(0,0,0,.02);
+    }
+    .callout .callout-title { color: var(--text-muted); }
+
     .callout.info {
       background: rgba(137,180,250,.07);
       border-color: #89b4fa;
@@ -1771,8 +1811,12 @@
       </tr>
     </tbody>
   </table></div>
-  <div class="callout">
-    La navegación por asociaciones devuelve <span class="kw">Set</span> si la asociación no es ordenada. <code>collect()</code> siempre devuelve <span class="kw">Bag</span>.
+  <div class="callout info">
+    <div class="callout-icon" aria-hidden="true">ℹ</div>
+    <div class="callout-body">
+      <div class="callout-title">Tipos de retorno en navegación</div>
+      <p>La navegación por asociaciones devuelve <span class="kw">Set</span> si la asociación no es ordenada. <code>collect()</code> siempre devuelve <span class="kw">Bag</span>.</p>
+    </div>
   </div>
 
   <h3>3.3 Operaciones de String</h3>
@@ -1858,7 +1902,11 @@
     </tbody>
   </table></div>
   <div class="callout warning">
-    <strong>implies:</strong> <code>a implies b</code> es equivalente a <code>(not a) or b</code>. Solo es <code>false</code> cuando <code>a = true</code> y <code>b = false</code>. En todos los demás casos es <code>true</code>.
+    <div class="callout-icon" aria-hidden="true">⚠</div>
+    <div class="callout-body">
+      <div class="callout-title">Cuidado con implies</div>
+      <p><code>a implies b</code> es equivalente a <code>(not a) or b</code>. Solo es <code>false</code> cuando <code>a = true</code> y <code>b = false</code>. En todos los demás casos es <code>true</code>.</p>
+    </div>
   </div>
 </section>
 
@@ -1987,8 +2035,12 @@ self.accounts->reject(a | a.balance >= 0)</code></pre>
       </tr>
     </tbody>
   </table></div>
-  <div class="callout">
-    <code>collect()</code> siempre retorna un <span class="kw">Bag</span>. Si se necesita un <span class="kw">Set</span>, usar <code>-&gt;collect(...)-&gt;asSet()</code>. Atajo: <code>self.role.propiedad</code> equivale a <code>self.role-&gt;collect(propiedad)</code>.
+  <div class="callout tip">
+    <div class="callout-icon" aria-hidden="true">✓</div>
+    <div class="callout-body">
+      <div class="callout-title">collect() siempre retorna Bag</div>
+      <p><code>collect()</code> siempre retorna un <span class="kw">Bag</span>. Si se necesita un <span class="kw">Set</span>, usar <code>-&gt;collect(...)-&gt;asSet()</code>. Atajo: <code>self.role.propiedad</code> equivale a <code>self.role-&gt;collect(propiedad)</code>.</p>
+    </div>
   </div>
   <div class="code-block">
     <pre><code class="language-ocl">-- Nombres de todos los empleados
@@ -2143,7 +2195,11 @@ self.employees->sortedBy(e | e.salary)</code></pre>
     </tbody>
   </table></div>
   <div class="callout tip">
-    Usar <code>-&gt;asSet()-&gt;size() = col-&gt;size()</code> para verificar que una colección no contiene duplicados.
+    <div class="callout-icon" aria-hidden="true">✓</div>
+    <div class="callout-body">
+      <div class="callout-title">Verificar ausencia de duplicados</div>
+      <p>Usar <code>-&gt;asSet()-&gt;size() = col-&gt;size()</code> para verificar que una colección no contiene duplicados.</p>
+    </div>
   </div>
 </section>
 
@@ -2196,8 +2252,12 @@ inv: self.employer.name <> ''
 context Company
 inv: self.employees->size() > 0</code></pre>
   </div>
-  <div class="callout">
-    Cuando la multiplicidad es <code>0..1</code> o <code>1</code>, la navegación devuelve un objeto (o <code>null</code>). Cuando es <code>*</code>, devuelve una colección.
+  <div class="callout info">
+    <div class="callout-icon" aria-hidden="true">ℹ</div>
+    <div class="callout-body">
+      <div class="callout-title">Multiplicidad y tipo de retorno</div>
+      <p>Cuando la multiplicidad es <code>0..1</code> o <code>1</code>, la navegación devuelve un objeto (o <code>null</code>). Cuando es <code>*</code>, devuelve una colección.</p>
+    </div>
   </div>
 
   <h3>5.3 Atajo de Navegación con <code>collect</code></h3>
@@ -2336,9 +2396,12 @@ in estadisticas->forAll(t | t.salario > 0)</code></pre>
   <h2 class="section-title"><span class="section-num">§6</span> Herencia y Design by Contract</h2>
 
   <h3>6.1 Principio de Sustitución de Liskov</h3>
-  <div class="callout">
-    "Una subclase debe poder usarse en cualquier lugar donde se use la superclase
-    sin violar las restricciones del sistema."
+  <div class="callout info">
+    <div class="callout-icon" aria-hidden="true">"</div>
+    <div class="callout-body">
+      <div class="callout-title">Principio de Sustitución de Liskov</div>
+      <p>Una subclase debe poder usarse en cualquier lugar donde se use la superclase sin violar las restricciones del sistema.</p>
+    </div>
   </div>
 
   <p>Implicaciones en OCL:</p>
@@ -2769,26 +2832,19 @@ inv soloPlastico:
 
   <h3>9.3 Errores Comunes</h3>
   <div class="callout warning">
-    <strong>Errores frecuentes</strong>
-    <ol>
-      <li><strong>Usar <code>.</code> en colecciones:</strong>
-          <code>self.employees.size()</code> ❌ → <code>self.employees-&gt;size()</code> ✓</li>
-      <li><strong>Olvidar <code>self</code>:</strong>
-          <code>employees-&gt;size()</code> puede funcionar dentro de <code>context</code>,
-          pero es mejor explícito.</li>
-      <li><strong>collect vs select:</strong>
-          <code>collect</code> transforma, <code>select</code> filtra. No confundir.</li>
-      <li><strong>@pre solo en post:</strong>
-          <code>atributo@pre</code> solo es válido en postcondiciones.</li>
-      <li><strong>result solo en post/body:</strong>
-          <code>result</code> solo en postcondiciones y body de operaciones.</li>
-      <li><strong>Set vs Bag:</strong>
-          La navegación devuelve Set, <code>collect()</code> devuelve Bag.
-          Si necesitas set: <code>-&gt;asSet()</code>.</li>
-      <li><strong>oclIsTypeOf vs oclIsKindOf:</strong>
-          <code>oclIsTypeOf(Dog)</code> es false para un <code>Poodle</code>.
-          Usar <code>oclIsKindOf</code> para incluir subtipos.</li>
-    </ol>
+    <div class="callout-icon" aria-hidden="true">⚠</div>
+    <div class="callout-body">
+      <div class="callout-title">Errores frecuentes</div>
+      <ol>
+        <li><strong>Usar <code>.</code> en colecciones:</strong> <code>self.employees.size()</code> ❌ → <code>self.employees-&gt;size()</code> ✓</li>
+        <li><strong>Olvidar <code>self</code>:</strong> <code>employees-&gt;size()</code> puede funcionar dentro de <code>context</code>, pero es mejor explícito.</li>
+        <li><strong>collect vs select:</strong> <code>collect</code> transforma, <code>select</code> filtra. No confundir.</li>
+        <li><strong>@pre solo en post:</strong> <code>atributo@pre</code> solo es válido en postcondiciones.</li>
+        <li><strong>result solo en post/body:</strong> <code>result</code> solo en postcondiciones y body de operaciones.</li>
+        <li><strong>Set vs Bag:</strong> la navegación devuelve Set, <code>collect()</code> devuelve Bag. Si necesitas Set: <code>-&gt;asSet()</code>.</li>
+        <li><strong>oclIsTypeOf vs oclIsKindOf:</strong> <code>oclIsTypeOf(Dog)</code> es false para un <code>Poodle</code>. Usar <code>oclIsKindOf</code> para incluir subtipos.</li>
+      </ol>
+    </div>
   </div>
 </section>
 
@@ -2953,10 +3009,14 @@ inv: self.Job->collect(job |
                 <div class="code-block"><pre><code class="language-ocl">context Person
 inv nombreCorto:   self.firstName.size() &lt;= 20
 inv apellidoCorto: self.lastName.size()  &lt;= 20</code></pre></div>
-                <div class="callout">
-                  <p>Se pueden expresar como dos invariantes separadas o como una sola con <code>and</code>:</p>
-                  <div class="code-block"><pre><code class="language-ocl">context Person
+                <div class="callout tip">
+                  <div class="callout-icon" aria-hidden="true">✓</div>
+                  <div class="callout-body">
+                    <div class="callout-title">Forma alternativa con and</div>
+                    <p>Se pueden expresar como dos invariantes separadas o como una sola con <code>and</code>:</p>
+                    <div class="code-block"><pre><code class="language-ocl">context Person
 inv: self.firstName.size() &lt;= 20 and self.lastName.size() &lt;= 20</code></pre></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -3026,8 +3086,12 @@ inv maxCuentas: self.bankAccount->size() &lt;= 5</code></pre></div>
                 <div class="code-block"><pre><code class="language-ocl">context Person
 inv maxCuentasCliente:
     self.bankAccount->notEmpty() implies self.bankAccount->size() &lt;= 5</code></pre></div>
-                <div class="callout">
-                  <p>La diferencia con (d) es que aquí solo aplica la restricción a quienes <em>ya tienen</em> al menos una cuenta. Con (d) aplica a todas las personas. En la práctica, si una persona sin cuentas no puede tener más de 5, la restricción (d) es equivalente.</p>
+                <div class="callout info">
+                  <div class="callout-icon" aria-hidden="true">ℹ</div>
+                  <div class="callout-body">
+                    <div class="callout-title">Diferencia con el ejercicio anterior</div>
+                    <p>La diferencia con (d) es que aquí solo aplica la restricción a quienes <em>ya tienen</em> al menos una cuenta. Con (d) aplica a todas las personas. En la práctica, si una persona sin cuentas no puede tener más de 5, la restricción (d) es equivalente.</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -3045,11 +3109,15 @@ inv maxCuentasCliente:
                 <div class="code-block"><pre><code class="language-ocl">context Person
 inv sinDuplicadosEmpresa:
     self.Job->isUnique(j | j.employer.name)</code></pre></div>
-                <div class="callout">
-                  <p>También es válido con <code>forAll</code>:</p>
-                  <div class="code-block"><pre><code class="language-ocl">context Person
+                <div class="callout tip">
+                  <div class="callout-icon" aria-hidden="true">✓</div>
+                  <div class="callout-body">
+                    <div class="callout-title">Forma alternativa con forAll</div>
+                    <p>También es válido con <code>forAll</code>:</p>
+                    <div class="code-block"><pre><code class="language-ocl">context Person
 inv: self.Job->forAll(j1, j2 |
          j1 &lt;> j2 implies j1.employer.name &lt;> j2.employer.name)</code></pre></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -3102,8 +3170,12 @@ init: 100</code></pre></div>
               <div class="spoiler-content">
                 <div class="code-block"><pre><code class="language-ocl">context Persona::edad : Integer
 derive: self.fechaNac.años(Fecha::hoy())</code></pre></div>
-                <div class="callout">
-                  <p>Se asume que <code>Fecha::hoy()</code> es una operación estática que devuelve la fecha actual, y <code>años(f)</code> calcula los años transcurridos entre la fecha del contexto y la fecha <code>f</code>.</p>
+                <div class="callout info">
+                  <div class="callout-icon" aria-hidden="true">ℹ</div>
+                  <div class="callout-body">
+                    <div class="callout-title">Supuesto del modelo</div>
+                    <p>Se asume que <code>Fecha::hoy()</code> es una operación estática que devuelve la fecha actual, y <code>años(f)</code> calcula los años transcurridos entre la fecha del contexto y la fecha <code>f</code>.</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -3457,8 +3529,12 @@ inv numerosUnicos:
               <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
               <div class="spoiler-content">
                 <p>No puede contradecirlo. Por el <strong>principio de sustitución de Liskov</strong>, los invariantes se <strong>heredan</strong>: toda instancia de <code>Afiliado</code> debe cumplir los invariantes de <code>Persona</code> <em>y</em> los propios de <code>Afiliado</code>. Un invariante de <code>Afiliado</code> puede <strong>agregar</strong> restricciones pero nunca relajarlas ni contradecirlas.</p>
-                <div class="callout">
-                  <p>Ejemplo: si <code>Persona</code> tiene <code>inv: self.edad &gt;= 0</code>, <code>Afiliado</code> puede agregar <code>inv: self.edad &gt;= 18</code> (más restrictivo), pero <strong>no</strong> puede poner <code>inv: self.edad &gt;= 0 or self.edad = -1</code> (que sería más permisivo).</p>
+                <div class="callout info">
+                  <div class="callout-icon" aria-hidden="true">ℹ</div>
+                  <div class="callout-body">
+                    <div class="callout-title">Regla de Liskov aplicada</div>
+                    <p>Ejemplo: si <code>Persona</code> tiene <code>inv: self.edad &gt;= 0</code>, <code>Afiliado</code> puede agregar <code>inv: self.edad &gt;= 18</code> (más restrictivo), pero <strong>no</strong> puede poner <code>inv: self.edad &gt;= 0 or self.edad = -1</code> (que sería más permisivo).</p>
+                  </div>
                 </div>
               </div>
             </div>
