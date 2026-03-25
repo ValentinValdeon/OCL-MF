@@ -1,0 +1,117 @@
+
+============================================================
+STREAM 0
+============================================================
+M ÉTODOS  F ORMALES
+Práctico de OC L
+Ejercicio 1:  Dado el diagrama de clases siguiente:
+1. Expresar en lenguaje natural :
+(a\ En el context o de  Person ,
+isMarried implies age > 15
+(b\ context Company 
+inv : numberOfEmployees = employee - >size(\
+(c\ context Person::income(d:Date\ Integer
+pre : d.laterThan(self.birthDate\
+post :  if age < 18
+then result < 100
+else result < 200
+endif
+(d\ BankAccount.allInstances(\. c ustomer  - > collect(p: Person | p .managedC ompanies\ - > 
+asSet(\  - > size(\= 3
+
+============================================================
+STREAM 2
+============================================================
+(e\ En el contexto del  diagrama dado ,  ¿ hay diferencia  en  los valor es que devuelve la expresión 
+(d\ y  los que devuelve  la siguiente expresión? Justifique la respuesta.
+BankAccount.allInstances(\.customer  - > collect(p: Person | p.managedcompanies\ - > 
+size(\= 3
+(f\ En el contexto de Person ,  e xplique la diferencia entre la expresión  Marriage [husband] y 
+la expresión Marriage [wife].
+(g\ c ontext Person
+inv:  self.Marriage[husband]  - >size(\= 1 implies self.gender = Gender::female and
+self.Marriage[wife]  - >size(\ 1 implies self.gender = Gender::male
+(h\ En el contexto de Person, 
+self.Job - >collect(job | 
+Tuple{ salario: Integer = job.salary,  c ompañia : Company =  job. employer }\
+2. Expresar en  OCL:
+(a\ La longitud del nombre ( firstname \ una persona siempre es inferior a 20 caracteres, lo 
+mismo  vale para la longitud de su apellido ( lastName \
+(b\ Cualquiera que administre una empresa es un empleado de esa empresa.  Escribir primero el 
+invariante considerando el contexto  Person y luego considerando el contexto  Company .
+(c\ Toda empresa tiene  al menos  un empleado  de género ( gender \emenino ( female \ .
+(d\ Ninguna persona puede tener más de 5 cuentas bancarias.
+(e\ Ningún cliente del banco puede tener más de 5 cuentas bancarias (un cliente es una persona 
+que tiene al menos una cuenta\.
+(f\ Nadie puede tener dos empleos  en  compañías que tienen idénticos nombres .
+Ejercicio  2 :  Dado el siguiente diagrama de clases:
+1. Especificar en 100 el valor inicial del atributo estático  máximo de la clase  Mesa .
+
+============================================================
+STREAM 4
+============================================================
+2. Especificar el valor de l atributo derivado edad de la clase  Persona ,  expresado  como la cantidad 
+de  años entre la fecha de nacimiento y la fecha corriente. Nota: el método  años de la clase  Fecha
+devuelve la diferencia en años entre dos fechas.
+3. Especificar el cuerpo de las siguientes operaciones de c onsulta, ubicando la operación en la clase 
+que considere más adecuada:
+(a\ Todos los  afiliado s de ambos géneros de  un partido .
+(b\ Tod a s las afiliadas a un partido con estudios universitarios .
+(c\ Los afiliados de ambos géneros  a un partido de nombre dado. 
+(d\ La  cantidad de afiliado s  de ambos géneros  de un partido.
+(e\ Si una persona está afiliada a un partido dado.
+(f\ Dados el nombre y apellido de una persona y el nombre de un partido, determinar si existe 
+una persona con ese nombre y apellido que esté afiliada al parti do de nombre dado .
+(g\ Todos l os matrimonios celebrados entre dos fechas dadas.
+(h\ Una  secuencia con los matrimonios iguali tarios (personas de igual sexo\, ordenada por fecha 
+de matrimonio.
+(i\ El conjunto ordenado con  los  afiliado s de ambos géneros  de un  partido que sean  mayores de 
+60 años.
+(j\ Si la cantidad de afiliad o s de ambos géneros a partidos nacionales en  un circuito dado es 
+mayor que la cantidad de  afiliados de ambos géneros a partidos provinciales  del mismo
+circuito .
+(k\ Todos los afiliado s a un partido  ordenados por circuito .
+(l\ El nombre de e l/los partido /s que tiene /n el /la afiliado/a  de mayor edad.
+(m\ El  par conteniendo el  número de mesa y circuito en la que vota una persona de  nro. y tipo de 
+documento dado s .
+(n\ Una secuencia  de tuplas conteniendo los apellidos y  nombres de los  dos  cónyuges  así como la
+fecha de l matrimonio de todos aquellos matrimonios vigentes (sin fecha de divorcio\ La 
+secuencia debe encontrarse ordenada por fecha de matrimonio y el nombre y apellido de c/u 
+de los cónyuges debe ser, a su vez, una tupla con dos campos .
+4. Especificar los siguientes invariantes: 
+(a\ Si el tipo de documento de un a persona es LE el  gé nero debe ser masculino, y si es LC, el 
+g é nero debe  ser femenino.
+(b\ Todos los matrimonios  anteriores al  15/07/10 deben ser entre p ersonas de distinto  género .
+Nota: asuma la existencia de un constructor de objetos de clase Fecha que recibe tres 
+parámetros  enteros para el día, mes y año.
+(c\ Los presidentes de mesa deben  contar por lo menos  con  estudios secundarios .
+(d\ Los presidentes de mesa no deben estar afiliados a ningún partido político.
+(e\ Todas las personas que votan en alguna mesa tienen un a edad mayor o igual a 16.
+(f\ La cantidad de  electores de cada mesa  de un circuito  no debe superar el cociente entre la 
+cantidad  total  de electores y la cantidad total de mesas de l circuito , ni debe superar el valor 
+máximo (atributo estático  máximo \stablecido para las mesas .
+
+============================================================
+STREAM 5
+============================================================
+(g\ Las personas que votan, lo hacen en el circuito en donde están domiciliados.
+(h\ La edad de las personas (medida en años\es mayor o i gual a cero y la edad de los afiliados es 
+mayor o igual 18. ¿ Es posible expresar ese invariante para  Afiliado o estaríamos violando el 
+principio de sustitución de Liskov? Justificar.
+5. Especificar haciendo uso del principio de Diseño por Contrato las  siguientes operaciones:
+(a\ La operación  afiliar(p :  Persona \ de la clase  Partido . Una persona se puede afiliar a un 
+partido siempre que ya no se enc uentre afiliada a algún partido y su edad sea mayor o igual a 
+18.
+Si piensa que la operación debería estar en ot ra clase, ¿a cuál  la movería  y por qué?
+(b\ La operación  desafiliar( nroDoc: Integer, tipoDoc: TipoDocumento \ de la clase  Partido . 
+Para poder desafiliar a alguien ,  la persona debe estar afiliada al  parti do y no debe ser  su
+presidente.
+Si piensa que la operación debería estar en otra clase, ¿a cuál  la movería  y por qué?
+(c\ La operación  cambiarPresidencia( nroDoc: Integer, tipoDoc: TipoDocumento \ de la clase 
+Partido . Para poder realizar la operación , el nuevo presidente  ya  debe estar afiliado al partido.
+Si piensa que la operación debería estar en otra clase, ¿a cuál y por qué la movería?
+(d\ La operación  inscribirMatrimonio(c1, c2: Persona , fecha: Fecha \ de la clase asociación 
+Matrimonio . Para poder inscribir un matrimonio ninguno de los contraye ntes puede  estar 
+casado (sí pu do estarlo en el pasado pero ahora está  divorciado\ y la fecha del matrimonio no 
+puede ser mayor a la fecha del día en que se realiza la inscripción.
+Si piensa que la operación debería estar en otra clase, ¿a cuál  la movería  y por qué?

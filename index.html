@@ -1,0 +1,3657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OCL Reference — Métodos Formales</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Nunito:wght@300;400;500;600;700&family=Source+Code+Pro:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+
+  <style>
+    /* ============================================================
+       CSS CUSTOM PROPERTIES
+    ============================================================ */
+    :root {
+      --bg:             #f8f7f4;
+      --sidebar-bg:     #eef0eb;
+      --primary:        #2d6a4f;
+      --primary-light:  #40916c;
+      --primary-pale:   #d8f3dc;
+      --secondary:      #b5451b;
+      --secondary-pale: #fce4d6;
+      --code-bg:        #1e1e2e;
+      --code-text:      #cdd6f4;
+      --code-comment:   #6c7086;
+      --code-keyword:   #cba6f7;
+      --code-string:    #a6e3a1;
+      --code-number:    #fab387;
+      --code-operator:  #89dceb;
+      --border:         #e0ddd6;
+      --border-strong:  #c8c4bb;
+      --text:           #2c2c2c;
+      --text-muted:     #6b6b6b;
+      --text-light:     #9a9a9a;
+      --header-bg:      #ffffff;
+      --header-h:       60px;
+      --sidebar-w:      260px;
+      --content-max:    100%;
+      --radius:         6px;
+      --radius-lg:      10px;
+      --shadow-sm:      0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-md:      0 4px 12px rgba(0,0,0,.08), 0 2px 4px rgba(0,0,0,.05);
+      --shadow-lg:      0 8px 24px rgba(0,0,0,.10), 0 4px 8px rgba(0,0,0,.06);
+      --transition:     180ms ease;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ============================================================
+       HEADER / TOP NAVBAR
+    ============================================================ */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--header-h);
+      background: var(--header-bg);
+      border-bottom: 2px solid var(--primary);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      padding: 0 1.5rem;
+    }
+
+    .logo {
+      font-family: 'Lora', serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--primary);
+      letter-spacing: -.02em;
+      white-space: nowrap;
+      flex-shrink: 0;
+      line-height: 1.15;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-name { display: flex; align-items: baseline; gap: .15em; }
+
+    .logo span {
+      color: var(--secondary);
+    }
+
+    .logo-tag {
+      font-family: 'Nunito', sans-serif;
+      font-size: .6rem;
+      font-weight: 600;
+      color: var(--text-light);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    #search {
+      flex: 1;
+      max-width: 320px;
+      height: 34px;
+      padding: 0 .85rem 0 2.1rem;
+      border: 1px solid var(--border-strong);
+      border-radius: 20px;
+      background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b6b6b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat .7rem center;
+      font-family: 'Nunito', sans-serif;
+      font-size: .875rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    #search::placeholder { color: var(--text-muted); }
+
+    #search:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(45,106,79,.12);
+    }
+
+    .subtitle {
+      margin-left: auto;
+      font-size: .78rem;
+      color: var(--text-muted);
+      letter-spacing: .02em;
+      white-space: nowrap;
+      font-weight: 500;
+    }
+
+    /* ============================================================
+       PAGE WRAPPER (sidebar + content)
+    ============================================================ */
+    .page-wrapper {
+      display: flex;
+      min-height: calc(100vh - var(--header-h));
+    }
+
+    /* ============================================================
+       SIDEBAR
+    ============================================================ */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      position: sticky;
+      top: var(--header-h);
+      height: calc(100vh - var(--header-h));
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 1.25rem 0 2rem;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border-strong) transparent;
+    }
+
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: 4px;
+    }
+
+    .sidebar-label {
+      padding: .5rem 1.25rem .6rem;
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .sidebar-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--primary);
+      opacity: .25;
+      margin-right: .75rem;
+    }
+
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar nav a {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .45rem 1.25rem;
+      text-decoration: none;
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      border-left: 3px solid transparent;
+      transition: color var(--transition), background var(--transition), border-color var(--transition);
+      line-height: 1.4;
+    }
+
+    .sidebar nav a:hover {
+      color: var(--primary);
+      background: rgba(45,106,79,.12);
+    }
+
+    .sidebar nav a.active {
+      color: #fff;
+      border-left-color: var(--primary);
+      background: var(--primary);
+      font-weight: 600;
+    }
+
+    .nav-num {
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--text-light);
+      min-width: 1.4em;
+      font-family: 'Source Code Pro', monospace;
+    }
+
+    .sidebar nav a.active .nav-num { color: rgba(255,255,255,.8); }
+
+    h2.section-title {
+      font-family: 'Lora', serif;
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--text);
+      padding-bottom: .5rem;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      letter-spacing: -.02em;
+    }
+
+    /* ============================================================
+       MAIN CONTENT
+    ============================================================ */
+     .content {
+       flex: 1;
+       min-width: 0;
+       padding: 2rem 2.5rem 4rem;
+       overflow-x: hidden;
+     }
+
+     .content-inner {
+       max-width: 100%;
+       width: 100%;
+     }
+
+    /* ============================================================
+       SECTIONS
+    ============================================================ */
+    section {
+      margin-bottom: 3.5rem;
+      scroll-margin-top: calc(var(--header-h) + 1.5rem);
+    }
+
+    /* ============================================================
+       HEADINGS
+    ============================================================ */
+    h1, h2, h3, h4 {
+      font-family: 'Lora', serif;
+      line-height: 1.3;
+      color: var(--text);
+    }
+
+    .section-heading {
+      font-family: 'Lora', serif;
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--text);
+      padding-bottom: .5rem;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      letter-spacing: -.02em;
+    }
+
+    .section-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary);
+      color: #fff;
+      font-family: 'Source Code Pro', monospace;
+      font-size: .75rem;
+      font-weight: 700;
+      padding: .2em .55em;
+      border-radius: 4px;
+      letter-spacing: .04em;
+      flex-shrink: 0;
+      align-self: center;
+    }
+
+    h3.subsection-heading {
+      font-family: 'Lora', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 2.5rem 0 .75rem;
+      padding-bottom: .35rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: baseline;
+      gap: .5rem;
+    }
+
+    .sub-num {
+      font-family: 'Source Code Pro', monospace;
+      font-size: .85rem;
+      color: var(--secondary);
+      font-weight: 600;
+    }
+
+    h4.detail-heading {
+      font-family: 'Nunito', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--text-muted);
+      margin: 1.25rem 0 .5rem;
+    }
+
+    /* ============================================================
+       PARAGRAPH & INLINE
+    ============================================================ */
+    p {
+      margin-bottom: .9rem;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    p:last-child { margin-bottom: 0; }
+
+    code {
+      font-family: 'Source Code Pro', monospace;
+      font-size: .85em;
+      background: rgba(45,106,79,.08);
+      color: var(--secondary);
+      padding: .1em .35em;
+      border-radius: 3px;
+      font-weight: 500;
+    }
+
+    strong { font-weight: 700; }
+    em { font-style: italic; }
+
+    /* ============================================================
+       LISTS
+    ============================================================ */
+    ul, ol {
+      padding-left: 1.5rem;
+      margin-bottom: .9rem;
+    }
+
+    li {
+      margin-bottom: .35rem;
+      font-size: 1rem;
+    }
+
+    ul.icon-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    ul.icon-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: .6rem;
+      padding: .4rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: .95rem;
+    }
+
+    ul.icon-list li:last-child { border-bottom: none; }
+
+    ul.icon-list .icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: var(--primary);
+      color: #fff;
+      font-size: .7rem;
+      font-weight: 700;
+      font-family: 'Source Code Pro', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: .1rem;
+    }
+
+    ul.icon-list .icon.secondary { background: var(--secondary); }
+
+    ul.icon-list .item-label {
+      font-weight: 700;
+      color: var(--primary);
+      font-family: 'Source Code Pro', monospace;
+      font-size: .85rem;
+    }
+
+    ul.icon-list .item-desc {
+      font-size: .9rem;
+      color: var(--text-muted);
+      margin-top: .05rem;
+    }
+
+    /* ============================================================
+       CODE BLOCKS
+    ============================================================ */
+    .code-block-wrapper {
+      position: relative;
+      margin: 1rem 0 1.25rem;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+
+    .code-block-header {
+      background: #181825;
+      padding: .45rem .85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+    .term-dots {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-right: .75rem;
+      flex-shrink: 0;
+    }
+
+    .term-dots i {
+      display: block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      font-style: normal;
+    }
+
+    .term-dots i:nth-child(1) { background: #ff5f57; }
+    .term-dots i:nth-child(2) { background: #febc2e; }
+    .term-dots i:nth-child(3) { background: #28c840; }
+
+    .code-block-header-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .code-lang {
+      font-family: 'Source Code Pro', monospace;
+      font-size: .72rem;
+      font-weight: 600;
+      color: #89b4fa;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .copy-btn {
+      background: none;
+      border: 1px solid #45475a;
+      border-radius: 4px;
+      color: #7f849c;
+      font-family: 'Nunito', sans-serif;
+      font-size: .72rem;
+      font-weight: 600;
+      padding: .2rem .55rem;
+      cursor: pointer;
+      transition: all var(--transition);
+      letter-spacing: .02em;
+    }
+
+    .copy-btn:hover {
+      border-color: #89b4fa;
+      color: #89b4fa;
+      background: rgba(137,180,250,.08);
+    }
+
+    .copy-btn.copied {
+      border-color: #a6e3a1;
+      color: #a6e3a1;
+      background: rgba(166,227,161,.08);
+    }
+
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 1.1rem 1.25rem;
+      overflow-x: auto;
+      font-family: 'Source Code Pro', monospace;
+      font-size: .875rem;
+      line-height: 1.65;
+      tab-size: 2;
+      scrollbar-width: thin;
+      scrollbar-color: #45475a transparent;
+    }
+
+    pre::-webkit-scrollbar { height: 5px; }
+    pre::-webkit-scrollbar-track { background: transparent; }
+    pre::-webkit-scrollbar-thumb { background: #45475a; border-radius: 4px; }
+
+    /* Syntax highlight token classes */
+    .tok-kw   { color: #cba6f7; font-weight: 600; }   /* keyword */
+    .tok-str  { color: #a6e3a1; }                      /* string */
+    .tok-num  { color: #fab387; }                      /* number */
+    .tok-op   { color: #89dceb; }                      /* operator */
+    .tok-cm   { color: #6c7086; font-style: italic; }  /* comment */
+    .tok-ctx  { color: #89b4fa; font-weight: 600; }    /* context keyword */
+    .tok-inv  { color: #f38ba8; font-weight: 600; }    /* inv/pre/post */
+    .tok-self { color: #fab387; }                      /* self */
+    .tok-cls  { color: #e8c96e; }                      /* ClassName */
+    .tok-fn   { color: #89b4fa; }                      /* function */
+    .tok-ar   { color: #cba6f7; }                      /* arrow -> */
+
+    /* Highlighted line */
+    .hl-line {
+      display: block;
+      background: rgba(137,180,250,.08);
+      margin: 0 -1.25rem;
+      padding: 0 1.25rem;
+    }
+
+    /* ============================================================
+       CALLOUT BOXES
+    ============================================================ */
+    .callout {
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      margin: 1.1rem 0;
+      border-left: 4px solid;
+      display: flex;
+      gap: .75rem;
+    }
+
+    .callout-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: .05rem;
+      line-height: 1.6;
+      font-style: normal;
+      font-variant-emoji: text;
+    }
+
+    .callout-body { flex: 1; min-width: 0; }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: .875rem;
+      margin-bottom: .35rem;
+      letter-spacing: .01em;
+    }
+
+    .callout-body p {
+      font-size: .9rem;
+      margin-bottom: .5rem;
+    }
+
+    .callout-body p:last-child { margin-bottom: 0; }
+
+    /* Variants */
+    .callout.info {
+      background: rgba(137,180,250,.07);
+      border-color: #89b4fa;
+    }
+    .callout.info .callout-title { color: #1e66f5; }
+
+    .callout.tip {
+      background: var(--primary-pale);
+      border-color: var(--primary);
+    }
+    .callout.tip .callout-title { color: var(--primary); }
+
+    .callout.warning {
+      background: var(--secondary-pale);
+      border-color: var(--secondary);
+    }
+    .callout.warning .callout-title { color: var(--secondary); }
+
+    .callout.example {
+      background: #f5f0ff;
+      border-color: #8b5cf6;
+    }
+    .callout.example .callout-title { color: #7c3aed; }
+
+    /* ============================================================
+       TABLES
+    ============================================================ */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1rem 0 1.25rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+    }
+
+    .ref-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      margin: 1rem 0 1.25rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table.ref-table {
+      display: table;
+      width: 100%;
+      min-width: 100%;
+      border-radius: 0;
+      border: none;
+      box-shadow: none;
+      margin: 0;
+    }
+
+    thead {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    thead th {
+      padding: .7rem 1rem;
+      text-align: left;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      font-size: .8rem;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition);
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+
+    tbody tr:nth-child(even) { background: rgba(45,106,79,.03); }
+
+    tbody tr:hover { background: var(--primary-pale); }
+
+    tbody td {
+      padding: .65rem 1rem;
+      vertical-align: top;
+    }
+
+    td code {
+      font-size: .82em;
+    }
+
+    td.badge-cell {
+      white-space: nowrap;
+    }
+
+    /* ============================================================
+       BADGES
+    ============================================================ */
+    .badge {
+      display: inline-block;
+      padding: .15em .5em;
+      border-radius: 4px;
+      font-family: 'Source Code Pro', monospace;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+
+    .badge-inv  { background: rgba(243,139,168,.15); color: #d20f39; }
+    .badge-init { background: rgba(137,180,250,.15); color: #1e66f5; }
+    .badge-deriv{ background: rgba(250,179,135,.15); color: #fe640b; }
+    .badge-body { background: rgba(166,227,161,.15); color: #40a02b; }
+    .badge-pre  { background: rgba(203,166,247,.15); color: #8839ef; }
+    .badge-post { background: rgba(249,226,175,.15); color: #df8e1d; }
+
+    /* ============================================================
+       DEFINITION LIST
+    ============================================================ */
+    dl.def-list {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: .4rem 1.25rem;
+      margin: .75rem 0 1rem;
+      font-size: .95rem;
+    }
+
+    dl.def-list dt {
+      font-weight: 700;
+      color: var(--primary);
+      font-family: 'Source Code Pro', monospace;
+      font-size: .85rem;
+      padding-top: .05rem;
+    }
+
+    dl.def-list dd {
+      color: var(--text);
+    }
+
+    /* ============================================================
+       SYNTAX REFERENCE BOX
+    ============================================================ */
+    .syntax-box {
+      background: var(--bg);
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: .85rem 1.1rem;
+      margin: .85rem 0;
+    }
+
+    .syntax-box .syntax-label {
+      font-size: .68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--text-light);
+      margin-bottom: .5rem;
+    }
+
+    .syntax-box pre {
+      background: none;
+      color: var(--text);
+      padding: 0;
+      font-size: .85rem;
+      box-shadow: none;
+    }
+
+    .syntax-box .tok-kw  { color: var(--primary); }
+    .syntax-box .tok-inv { color: var(--secondary); }
+    .syntax-box .tok-ctx { color: var(--primary); }
+    .syntax-box .tok-cm  { color: var(--text-muted); font-style: italic; }
+
+    /* ============================================================
+       UTILITY
+    ============================================================ */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 2rem 0;
+    }
+
+    /* ============================================================
+       SEARCH HIGHLIGHT / HIDDEN SECTIONS
+    ============================================================ */
+    section.search-hidden {
+      display: none;
+    }
+
+    mark.search-match {
+      background: rgba(250,179,135,.4);
+      border-radius: 2px;
+      padding: 0 .1em;
+    }
+
+    /* ============================================================
+       MOBILE RESPONSIVE
+    ============================================================ */
+    @media (max-width: 768px) {
+      :root { --sidebar-w: 100%; --header-h: 56px; }
+
+      header {
+        padding: 0 1rem;
+        flex-wrap: wrap;
+        height: auto;
+        min-height: var(--header-h);
+        padding-top: .5rem;
+        padding-bottom: .5rem;
+        gap: .6rem;
+      }
+
+      .subtitle { display: none; }
+
+      #search { max-width: 100%; flex: 1 1 200px; }
+
+      .page-wrapper { flex-direction: column; }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        overflow-x: auto;
+        overflow-y: visible;
+        padding: .5rem 0;
+      }
+
+      .sidebar nav {
+        flex-direction: row;
+        gap: .15rem;
+        padding: 0 .5rem;
+      }
+
+      .sidebar nav a {
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        padding: .35rem .55rem;
+        white-space: nowrap;
+        font-size: 0;          /* hide text */
+        background: transparent;
+      }
+
+      .sidebar nav a .nav-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .75rem;
+        background: rgba(45,106,79,.1);
+        color: var(--primary);
+        padding: .2em .5em;
+        border-radius: 4px;
+        min-width: auto;
+      }
+
+      .sidebar nav a.active {
+        border-left: none;
+        border-bottom-color: var(--primary);
+        background: transparent;
+      }
+
+      .sidebar nav a.active .nav-num {
+        background: var(--primary);
+        color: #fff;
+      }
+
+      .sidebar-label { display: none; }
+
+      .content { padding: 1.25rem 1rem 3rem; }
+
+      .section-heading { font-size: 1.45rem; }
+    }
+
+    /* ============================================================
+       PRINT STYLES
+    ============================================================ */
+    @media print {
+      header, .sidebar { display: none !important; }
+      .page-wrapper { display: block; }
+      .content { padding: 0; }
+      .copy-btn { display: none; }
+      .code-block-header { display: none; }
+      pre {
+        background: #f4f4f4 !important;
+        color: #1e1e1e !important;
+        border: 1px solid #ccc;
+        print-color-adjust: exact;
+      }
+      section { page-break-inside: avoid; }
+    }
+
+    /* ============================================================
+       PAGE HERO
+    ============================================================ */
+    .page-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #1b4332 100%);
+      color: #fff;
+      padding: 2.75rem 2.5rem 2.5rem;
+      margin: -2rem -2.5rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 80% 50%, rgba(64,145,108,.35) 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    .page-hero > * { position: relative; z-index: 1; }
+
+    .page-hero h1 {
+      font-family: 'Lora', serif;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -.02em;
+      line-height: 1.2;
+      margin-bottom: .5rem;
+    }
+
+    .page-hero h1 span {
+      color: #95d5b2;
+    }
+
+    .page-hero .hero-sub {
+      font-size: 1rem;
+      color: rgba(255,255,255,.75);
+      font-weight: 400;
+      margin-bottom: 1.25rem;
+      max-width: 560px;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+
+    .hero-tags span {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      color: rgba(255,255,255,.9);
+      font-size: .75rem;
+      font-weight: 600;
+      font-family: 'Source Code Pro', monospace;
+      padding: .25em .7em;
+      border-radius: 20px;
+      letter-spacing: .03em;
+    }
+
+    @media (max-width: 768px) {
+      .page-hero {
+        margin: -1.25rem -1rem 2rem;
+        padding: 1.75rem 1rem 1.5rem;
+      }
+      .page-hero h1 { font-size: 1.7rem; }
+    }
+
+    /* ============================================================
+       SPOILER / EXERCISE STYLES
+    ============================================================ */
+    .exercise-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 1.2rem;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .exercise-statement {
+      padding: 1rem 1.2rem;
+    }
+    .exercise-statement .ej-num {
+      font-weight: 700;
+      color: var(--primary);
+      margin-right: .4rem;
+    }
+    .spoiler {
+      border-top: 1px solid var(--border);
+      padding: .6rem 1.2rem .8rem;
+      background: rgba(45,106,79,.04);
+      border-left: 3px solid var(--primary);
+    }
+    .spoiler-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .35rem .85rem;
+      border: 1.5px solid var(--primary);
+      border-radius: 5px;
+      background: transparent;
+      color: var(--primary);
+      font-family: inherit;
+      font-size: .82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .spoiler-btn .eye-icon {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      transition: opacity .15s;
+    }
+    .spoiler-btn:hover,
+    .spoiler-btn.active {
+      background: var(--primary);
+      color: #fff;
+    }
+    .spoiler-btn.active .eye-icon path { stroke: #fff; }
+    .spoiler-content {
+      overflow: hidden;
+      max-height: 0;
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+      transition: max-height .35s ease, margin-top .2s ease, padding-top .2s ease;
+    }
+    .spoiler-content.open {
+      max-height: 4000px;
+      margin-top: .75rem;
+      padding-top: .75rem;
+      border-top: 1px dashed var(--border);
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+    .badge {
+      display: inline-block;
+      padding: .18em .55em;
+      border-radius: 4px;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .03em;
+      margin-right: .3rem;
+    }
+    .badge-ocl2nl  { background: rgba(45,106,79,.12);  color: #2d6a4f; }
+    .badge-nl2ocl  { background: rgba(181,69,27,.12);  color: #b5451b; }
+    .badge-inv     { background: rgba(211,57,0,.1);    color: #c34a00; }
+    .badge-pre     { background: rgba(100,50,200,.1);  color: #6432c8; }
+    .badge-post    { background: rgba(0,100,180,.1);   color: #0064b4; }
+    .badge-body    { background: rgba(0,140,70,.1);    color: #008c46; }
+    .badge-init    { background: rgba(180,100,0,.1);   color: #b46400; }
+    .badge-derive  { background: rgba(0,100,160,.1);   color: #0064a0; }
+
+    .exercise-part-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 1.6rem 0 .8rem;
+      padding-bottom: .3rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    /* diagram containers */
+    .diagram-container {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .5rem;
+      background: #fff;
+      margin-bottom: 1.5rem;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════
+       HEADER
+  ═══════════════════════════════════════════════════════ -->
+  <header>
+    <div class="logo">
+      <div class="logo-name">OCL<span>·</span>Reference</div>
+      <span class="logo-tag">Object Constraint Language</span>
+    </div>
+    <input type="text" id="search" placeholder="Buscar en la referencia…" aria-label="Buscar secciones" />
+    <span class="subtitle">Métodos Formales · Ingeniería en Informática</span>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════
+       PAGE WRAPPER
+  ═══════════════════════════════════════════════════════ -->
+  <div class="page-wrapper">
+
+    <!-- ─────────────────────────────────────────────────────
+         SIDEBAR
+    ───────────────────────────────────────────────────── -->
+    <aside class="sidebar" aria-label="Navegación de secciones">
+      <div class="sidebar-label">Contenidos</div>
+      <nav>
+        <a href="#intro"       class="active"><span class="nav-num">§1</span> Introducción</a>
+        <a href="#sintaxis"             ><span class="nav-num">§2</span> Sintaxis Básica</a>
+        <a href="#tipos"                ><span class="nav-num">§3</span> Tipos OCL</a>
+        <a href="#colecciones"          ><span class="nav-num">§4</span> Operaciones de Colección</a>
+        <a href="#navegacion"           ><span class="nav-num">§5</span> Navegación</a>
+         <a href="#herencia"             ><span class="nav-num">§6</span> Herencia y DBC</a>
+         <a href="#chuleta"              ><span class="nav-num">§7</span> Hoja Chuleta</a>
+         <a href="#tips"                 ><span class="nav-num">§8</span> Tips OCL ↔ Natural</a>
+         <a href="#ejercicios"           ><span class="nav-num">§9</span> Ejercicios Prácticos</a>
+      </nav>
+    </aside>
+
+    <!-- ─────────────────────────────────────────────────────
+         MAIN CONTENT
+    ───────────────────────────────────────────────────── -->
+    <main class="content">
+      <div class="content-inner">
+
+
+        <!-- ═══════════════════════════════════════════════
+             PAGE HERO
+        ═══════════════════════════════════════════════ -->
+        <div class="page-hero">
+          <h1><span>OCL</span> Reference</h1>
+          <p class="hero-sub">Guía completa de Object Constraint Language · Material de estudio para Métodos Formales</p>
+          <div class="hero-tags">
+            <span>UML 2.x</span>
+            <span>OMG Standard</span>
+            <span>9 secciones</span>
+            <span>Hoja chuleta</span>
+            <span>Ejercicios con solución</span>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════
+             §1  INTRODUCCIÓN
+        ═══════════════════════════════════════════════ -->
+        <section id="intro" data-search-text="introducción ocl object constraint language formal restricciones uml omg declarativo">
+
+          <h2 class="section-heading">
+            <span class="section-num">§1</span>
+            Introducción a OCL
+          </h2>
+
+          <!-- What is OCL -->
+          <h3 class="subsection-heading">
+            <span class="sub-num">1.1</span> ¿Qué es OCL?
+          </h3>
+
+          <p>
+            <strong>OCL</strong> (<em>Object Constraint Language</em>) es un lenguaje formal
+            estándar definido por la <strong>OMG</strong> (Object Management Group) que permite
+            expresar <strong>restricciones y reglas de negocio</strong> sobre modelos UML de
+            forma precisa e inequívoca.
+          </p>
+
+          <div class="table-wrapper" style="margin-bottom:1.25rem;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Característica</th>
+                  <th>Descripción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Lenguaje formal</strong></td>
+                  <td>Semántica matemáticamente bien definida, sin ambigüedad</td>
+                </tr>
+                <tr>
+                  <td><strong>Parte de UML</strong></td>
+                  <td>Complementa los diagramas UML; estandarizado en UML 2.x</td>
+                </tr>
+                <tr>
+                  <td><strong>Declarativo</strong></td>
+                  <td>Describe <em>qué</em> debe cumplirse, no <em>cómo</em> lograrlo</td>
+                </tr>
+                <tr>
+                  <td><strong>Sin efectos laterales</strong></td>
+                  <td>Las expresiones OCL no modifican el estado del modelo</td>
+                </tr>
+                <tr>
+                  <td><strong>Tipado fuerte</strong></td>
+                  <td>Cada expresión tiene un tipo estático verificable</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Why OCL -->
+          <h3 class="subsection-heading">
+            <span class="sub-num">1.2</span> ¿Por qué necesitamos OCL?
+          </h3>
+
+          <p>
+            Los diagramas UML son herramientas visuales muy útiles, pero tienen
+            <strong>limitaciones expresivas</strong> intrínsecas. Ciertos requisitos del
+            dominio sencillamente no pueden representarse con notación gráfica:
+          </p>
+
+          <div class="callout warning">
+            <div class="callout-icon" aria-hidden="true">⚠</div>
+            <div class="callout-body">
+              <div class="callout-title">Limitación de UML sin OCL</div>
+              <p>
+                Un diagrama de clases puede mostrar que un <code>Flight</code> tiene una lista
+                de <code>passengers</code> y que un <code>Plane</code> tiene un atributo
+                <code>capacity</code>, pero <strong>no puede expresar</strong> que el número
+                de pasajeros nunca debe superar la capacidad del avión.
+              </p>
+            </div>
+          </div>
+
+          <p>
+            Con OCL, esa regla se expresa de forma concisa y sin ambigüedad:
+          </p>
+
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <div class="code-block-header-left">
+                <span class="term-dots"><i></i><i></i><i></i></span>
+                <span class="code-lang">OCL</span>
+              </div>
+              <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            </div>
+            <pre><span class="tok-ctx">context</span> <span class="tok-cls">Flight</span>
+<span class="tok-inv">inv</span> pasajerosValidos:
+    <span class="tok-self">self</span>.passengers<span class="tok-ar">-></span><span class="tok-fn">size</span>() <span class="tok-op">&lt;=</span> <span class="tok-self">self</span>.plane.capacity</pre>
+          </div>
+
+          <div class="callout tip">
+            <div class="callout-icon" aria-hidden="true">✓</div>
+            <div class="callout-body">
+              <div class="callout-title">La invariante siempre se cumple</div>
+              <p>
+                Esta restricción debe ser verdadera para <em>toda</em> instancia de
+                <code>Flight</code> en <em>todo</em> momento del ciclo de vida del objeto.
+                El evaluador OCL puede verificarlo automáticamente.
+              </p>
+            </div>
+          </div>
+
+          <!-- Where to use OCL -->
+          <h3 class="subsection-heading">
+            <span class="sub-num">1.3</span> Usos de OCL
+          </h3>
+
+          <p>OCL se emplea en seis contextos fundamentales dentro de un modelo UML:</p>
+
+          <ul class="icon-list">
+            <li>
+              <span class="icon">inv</span>
+              <div>
+                <div class="item-label">Invariantes de clase (inv)</div>
+                <div class="item-desc">
+                  Condiciones booleanas que deben cumplirse para toda instancia de la clase,
+                  en cualquier estado estable del sistema.
+                </div>
+              </div>
+            </li>
+            <li>
+              <span class="icon">init</span>
+              <div>
+                <div class="item-label">Valores iniciales de atributos (init)</div>
+                <div class="item-desc">
+                  Definen el valor que toma un atributo en el momento de creación de la instancia.
+                </div>
+              </div>
+            </li>
+            <li>
+              <span class="icon">der</span>
+              <div>
+                <div class="item-label">Atributos derivados (derive)</div>
+                <div class="item-desc">
+                  Especifican cómo calcular el valor de un atributo marcado con <code>/</code>
+                  en el diagrama de clases UML.
+                </div>
+              </div>
+            </li>
+            <li>
+              <span class="icon secondary">bod</span>
+              <div>
+                <div class="item-label">Cuerpo de operaciones de consulta (body)</div>
+                <div class="item-desc">
+                  Proporcionan la implementación declarativa de una operación de solo lectura
+                  (que no modifica estado).
+                </div>
+              </div>
+            </li>
+            <li>
+              <span class="icon secondary">pre</span>
+              <div>
+                <div class="item-label">Precondiciones de operaciones (pre)</div>
+                <div class="item-desc">
+                  Condiciones que deben ser verdaderas <em>antes</em> de invocar una operación;
+                  responsabilidad del llamador.
+                </div>
+              </div>
+            </li>
+            <li>
+              <span class="icon secondary">pos</span>
+              <div>
+                <div class="item-label">Postcondiciones de operaciones (post)</div>
+                <div class="item-desc">
+                  Condiciones que deben ser verdaderas <em>después</em> de ejecutar la operación;
+                  responsabilidad del proveedor. Admiten <code>result</code> y
+                  <code>@pre</code>.
+                </div>
+              </div>
+            </li>
+          </ul>
+
+        </section><!-- /#intro -->
+
+        <div class="divider"></div>
+
+        <!-- ═══════════════════════════════════════════════
+             §2  SINTAXIS BÁSICA
+        ═══════════════════════════════════════════════ -->
+        <section id="sintaxis" data-search-text="sintaxis básica invariante init derive body pre post context self result @pre precondición postcondición">
+
+          <h2 class="section-heading">
+            <span class="section-num">§2</span>
+            Sintaxis Básica
+          </h2>
+
+          <p>
+            Toda expresión OCL comienza con una <strong>cláusula <code>context</code></strong>
+            que indica la clase u operación a la que se aplica la restricción,
+            seguida de una <strong>estereotipo</strong> (<code>inv</code>, <code>init</code>,
+            <code>derive</code>, <code>body</code>, <code>pre</code> o <code>post</code>)
+            y la expresión propiamente dicha.
+          </p>
+
+          <!-- Overview table of all 6 forms -->
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Estereotipo</th>
+                  <th>Aplicado a</th>
+                  <th>Propósito</th>
+                  <th>Tipo de expresión</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="badge-cell"><span class="badge badge-inv">inv</span></td>
+                  <td>Clase / tipo</td>
+                  <td>Invariante de integridad</td>
+                  <td>Booleana</td>
+                </tr>
+                <tr>
+                  <td class="badge-cell"><span class="badge badge-init">init</span></td>
+                  <td>Atributo</td>
+                  <td>Valor inicial al crear instancia</td>
+                  <td>Mismo tipo que el atributo</td>
+                </tr>
+                <tr>
+                  <td class="badge-cell"><span class="badge badge-deriv">derive</span></td>
+                  <td>Atributo derivado</td>
+                  <td>Regla de cálculo del atributo</td>
+                  <td>Mismo tipo que el atributo</td>
+                </tr>
+                <tr>
+                  <td class="badge-cell"><span class="badge badge-body">body</span></td>
+                  <td>Operación de consulta</td>
+                  <td>Implementación declarativa</td>
+                  <td>Tipo de retorno de la operación</td>
+                </tr>
+                <tr>
+                  <td class="badge-cell"><span class="badge badge-pre">pre</span></td>
+                  <td>Operación</td>
+                  <td>Condición previa</td>
+                  <td>Booleana</td>
+                </tr>
+                <tr>
+                  <td class="badge-cell"><span class="badge badge-post">post</span></td>
+                  <td>Operación</td>
+                  <td>Condición posterior</td>
+                  <td>Booleana (puede usar <code>result</code>, <code>@pre</code>)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- ─── 2.1 Invariantes ─── -->
+          <h3 class="subsection-heading">
+            <span class="sub-num">2.1</span> Invariantes
+            <span class="badge badge-inv" style="margin-left:.5rem;font-size:.75rem;">inv</span>
+          </h3>
+
+          <p>
+            Una <strong>invariante</strong> es una expresión booleana que debe ser
+            <code>true</code> para <em>toda</em> instancia de la clase, en
+            <em>todo momento estable</em> (antes y después de cualquier operación).
+          </p>
+
+          <div class="syntax-box">
+            <div class="syntax-label">Sintaxis</div>
+            <pre><span class="tok-ctx">context</span> <span class="tok-cls">NombreClase</span>
+<span class="tok-inv">inv</span> [nombre_opcional]: &lt;expresión_booleana&gt;</pre>
+          </div>
+
+          <div class="callout info">
+            <div class="callout-icon" aria-hidden="true">ℹ</div>
+            <div class="callout-body">
+              <div class="callout-title">El rol de <code>self</code></div>
+              <p>
+                Dentro de una invariante, <code>self</code> hace referencia a la instancia
+                concreta que está siendo evaluada. Es equivalente al <code>this</code> de
+                lenguajes orientados a objetos.
+              </p>
+            </div>
+          </div>
+
+          <h4 class="detail-heading">Ejemplo</h4>
+
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <div class="code-block-header-left">
+                <span class="term-dots"><i></i><i></i><i></i></span>
+                <span class="code-lang">OCL — Invariantes</span>
+              </div>
+              <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            </div>
+            <pre><span class="tok-cm">-- El cliente debe ser mayor de edad</span>
+<span class="tok-ctx">context</span> <span class="tok-cls">Customer</span>
+<span class="tok-inv">inv</span> mayorDeEdad: <span class="tok-self">self</span>.age <span class="tok-op">&gt;=</span> <span class="tok-num">18</span>
+
+<span class="tok-cm">-- La fecha de inicio debe ser anterior a la de vencimiento</span>
+<span class="tok-ctx">context</span> <span class="tok-cls">CustomerCard</span>
+<span class="tok-inv">inv</span> fechasValidas: <span class="tok-self">self</span>.validFrom <span class="tok-op">&lt;</span> <span class="tok-self">self</span>.goodThru</pre>
+          </div>
+
+          <!-- ─── 2.2 Valores Iniciales ─── -->
+          <h3 class="subsection-heading">
+            <span class="sub-num">2.2</span> Valores Iniciales
+            <span class="badge badge-init" style="margin-left:.5rem;font-size:.75rem;">init</span>
+          </h3>
+
+          <p>
+            Especifica el <strong>valor inicial</strong> que toma un atributo en el momento
+            en que se crea una nueva instancia de la clase. Debe respetar el tipo declarado
+            del atributo.
+          </p>
+
+          <div class="syntax-box">
+            <div class="syntax-label">Sintaxis</div>
+            <pre><span class="tok-ctx">context</span> <span class="tok-cls">Clase</span>::atributo : <span class="tok-cls">Tipo</span>
+<span class="tok-inv">init</span>: &lt;expresión&gt;</pre>
+          </div>
+
+          <h4 class="detail-heading">Ejemplo</h4>
+
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <div class="code-block-header-left">
+                <span class="term-dots"><i></i><i></i><i></i></span>
+                <span class="code-lang">OCL — Valor inicial</span>
+              </div>
+              <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            </div>
+            <pre><span class="tok-cm">-- Al crear una cuenta, el saldo de puntos comienza en cero</span>
+<span class="tok-ctx">context</span> <span class="tok-cls">LoyaltyAccount</span>::points : <span class="tok-cls">Integer</span>
+<span class="tok-inv">init</span>: <span class="tok-num">0</span></pre>
+          </div>
+
+          <!-- ─── 2.3 Reglas de Derivación ─── -->
+          <h3 class="subsection-heading">
+            <span class="sub-num">2.3</span> Reglas de Derivación
+            <span class="badge badge-deriv" style="margin-left:.5rem;font-size:.75rem;">derive</span>
+          </h3>
+
+          <p>
+            Describe <strong>cómo calcular</strong> el valor de un <strong>atributo
+            derivado</strong> (marcado con <code>/</code> en el diagrama de clases UML).
+            El atributo no se almacena; su valor se recalcula cada vez que se accede.
+          </p>
+
+          <div class="syntax-box">
+            <div class="syntax-label">Sintaxis</div>
+            <pre><span class="tok-ctx">context</span> <span class="tok-cls">Clase</span>::atributo : <span class="tok-cls">Tipo</span>
+<span class="tok-inv">derive</span>: &lt;expresión&gt;</pre>
+          </div>
+
+          <h4 class="detail-heading">Ejemplo</h4>
+
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <div class="code-block-header-left">
+                <span class="term-dots"><i></i><i></i><i></i></span>
+                <span class="code-lang">OCL — Atributo derivado</span>
+              </div>
+              <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            </div>
+            <pre><span class="tok-cm">-- El nombre impreso combina tratamiento y apellido del titular</span>
+<span class="tok-ctx">context</span> <span class="tok-cls">CustomerCard</span>::printedName : <span class="tok-cls">String</span>
+<span class="tok-inv">derive</span>: owner.title.<span class="tok-fn">concat</span>(<span class="tok-str">' '</span>).<span class="tok-fn">concat</span>(owner.lastName)</pre>
+          </div>
+
+          <!-- ─── 2.4 Cuerpo de Operación ─── -->
+          <h3 class="subsection-heading">
+            <span class="sub-num">2.4</span> Cuerpo de Operación
+            <span class="badge badge-body" style="margin-left:.5rem;font-size:.75rem;">body</span>
+          </h3>
+
+          <p>
+            Proporciona la <strong>implementación declarativa</strong> de una operación de
+            <em>consulta</em>: una operación que retorna un valor y <strong>no modifica</strong>
+            el estado del objeto (sin efectos laterales).
+          </p>
+
+          <div class="syntax-box">
+            <div class="syntax-label">Sintaxis</div>
+            <pre><span class="tok-ctx">context</span> <span class="tok-cls">Clase</span>::<span class="tok-fn">operacion</span>(param: <span class="tok-cls">Tipo</span>) : <span class="tok-cls">TipoRetorno</span>
+<span class="tok-inv">body</span>: &lt;expresión&gt;</pre>
+          </div>
+
+          <h4 class="detail-heading">Ejemplo</h4>
+
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <div class="code-block-header-left">
+                <span class="term-dots"><i></i><i></i><i></i></span>
+                <span class="code-lang">OCL — Body de consulta</span>
+              </div>
+              <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            </div>
+            <pre><span class="tok-cm">-- Retorna todos los servicios de un nivel dado</span>
+<span class="tok-ctx">context</span> <span class="tok-cls">LoyaltyProgram</span>::<span class="tok-fn">getServices</span>(k: <span class="tok-cls">ServiceLevel</span>) : <span class="tok-cls">Set</span>(<span class="tok-cls">Service</span>)
+<span class="tok-inv">body</span>: partners<span class="tok-ar">-></span><span class="tok-fn">collect</span>(p | p.deliveredServices)
+          <span class="tok-ar">-></span><span class="tok-fn">select</span>(s | s.serviceLevel <span class="tok-op">=</span> k)</pre>
+          </div>
+
+          <!-- ─── 2.5 Precondiciones ─── -->
+          <h3 class="subsection-heading">
+            <span class="sub-num">2.5</span> Precondiciones
+            <span class="badge badge-pre" style="margin-left:.5rem;font-size:.75rem;">pre</span>
+          </h3>
+
+          <p>
+            Condición que <strong>debe ser <code>true</code> antes de invocar</strong> la
+            operación. Es responsabilidad del <em>llamador</em> garantizarla.
+            Si la precondición se viola, el comportamiento de la operación es indefinido.
+          </p>
+
+          <div class="syntax-box">
+            <div class="syntax-label">Sintaxis</div>
+            <pre><span class="tok-ctx">context</span> <span class="tok-cls">Clase</span>::<span class="tok-fn">operacion</span>(param: <span class="tok-cls">Tipo</span>)
+<span class="tok-inv">pre</span> [nombre_opcional]: &lt;expresión_booleana&gt;</pre>
+          </div>
+
+          <h4 class="detail-heading">Ejemplo</h4>
+
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <div class="code-block-header-left">
+                <span class="term-dots"><i></i><i></i><i></i></span>
+                <span class="code-lang">OCL — Precondición</span>
+              </div>
+              <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            </div>
+            <pre><span class="tok-cm">-- Solo se puede inscribir un cliente que aún no está en el programa</span>
+<span class="tok-ctx">context</span> <span class="tok-cls">LoyaltyProgram</span>::<span class="tok-fn">enroll</span>(c: <span class="tok-cls">Customer</span>)
+<span class="tok-inv">pre</span> clienteNoInscrito: <span class="tok-kw">not</span> <span class="tok-self">self</span>.participants<span class="tok-ar">-></span><span class="tok-fn">includes</span>(c)</pre>
+          </div>
+
+          <!-- ─── 2.6 Postcondiciones ─── -->
+          <h3 class="subsection-heading">
+            <span class="sub-num">2.6</span> Postcondiciones
+            <span class="badge badge-post" style="margin-left:.5rem;font-size:.75rem;">post</span>
+          </h3>
+
+          <p>
+            Condición que <strong>debe ser <code>true</code> después de ejecutar</strong>
+            la operación. Es responsabilidad del <em>proveedor</em> (la operación misma)
+            garantizarla. Permiten usar dos operadores especiales:
+          </p>
+
+          <dl class="def-list">
+            <dt>result</dt>
+            <dd>Hace referencia al <strong>valor que retorna</strong> la operación.</dd>
+            <dt>@pre</dt>
+            <dd>
+              Se aplica a un atributo o colección para obtener su valor
+              <strong>antes de que la operación se ejecutara</strong>.
+              Sintaxis: <code>atributo@pre</code>.
+            </dd>
+          </dl>
+
+          <div class="syntax-box">
+            <div class="syntax-label">Sintaxis</div>
+            <pre><span class="tok-ctx">context</span> <span class="tok-cls">Clase</span>::<span class="tok-fn">operacion</span>(param: <span class="tok-cls">Tipo</span>) : <span class="tok-cls">Tipo</span>
+<span class="tok-inv">post</span> [nombre_opcional]: &lt;expresión_booleana&gt;</pre>
+          </div>
+
+          <h4 class="detail-heading">Ejemplo</h4>
+
+          <div class="code-block-wrapper">
+            <div class="code-block-header">
+              <div class="code-block-header-left">
+                <span class="term-dots"><i></i><i></i><i></i></span>
+                <span class="code-lang">OCL — Postcondiciones</span>
+              </div>
+              <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+            </div>
+            <pre><span class="tok-cm">-- Tras enroll, el cliente está en la lista y el tamaño aumentó en 1</span>
+<span class="tok-ctx">context</span> <span class="tok-cls">LoyaltyProgram</span>::<span class="tok-fn">enroll</span>(c: <span class="tok-cls">Customer</span>)
+<span class="tok-inv">post</span> inscripto:
+    <span class="tok-self">self</span>.participants<span class="tok-ar">-></span><span class="tok-fn">includes</span>(c)
+<span class="tok-inv">post</span> sinCambiosTamanio:
+    <span class="tok-self">self</span>.participants<span class="tok-ar">-></span><span class="tok-fn">size</span>() <span class="tok-op">=</span> <span class="tok-self">self</span>.participants@pre<span class="tok-ar">-></span><span class="tok-fn">size</span>() <span class="tok-op">+</span> <span class="tok-num">1</span></pre>
+          </div>
+
+          <div class="callout example">
+            <div class="callout-icon" aria-hidden="true">★</div>
+            <div class="callout-body">
+              <div class="callout-title">Palabras clave especiales en postcondiciones</div>
+              <p>
+                <code>result</code> — El valor que devuelve la operación. Solo disponible
+                en <code>post</code> de operaciones con tipo de retorno.
+              </p>
+              <p>
+                <code>atributo@pre</code> — El valor que tenía <code>atributo</code>
+                <strong>justo antes</strong> de que se ejecutara la operación. Fundamental
+                para expresar cómo cambia el estado: por ejemplo,
+                <code>self.points@pre + earned</code> verifica que los puntos se incrementaron
+                en la cantidad correcta.
+              </p>
+            </div>
+          </div>
+
+        </section><!-- /#sintaxis -->
+
+        <div class="divider"></div>
+
+
+<!-- §3 TIPOS OCL -->
+<section id="tipos">
+  <h2 class="section-title"><span class="section-num">§3</span> Tipos OCL</h2>
+
+  <h3>3.1 Tipos Primitivos</h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th>Tipo</th>
+        <th>Descripción</th>
+        <th>Ejemplos de valores</th>
+        <th>Operaciones clave</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="kw">Integer</span></td>
+        <td>Número entero</td>
+        <td><code>0</code>, <code>-5</code>, <code>42</code></td>
+        <td><span class="op">+</span>, <span class="op">-</span>, <span class="op">*</span>, <span class="op">/</span>, <code>abs()</code>, <code>mod()</code>, <code>div()</code>, <code>max()</code>, <code>min()</code></td>
+      </tr>
+      <tr>
+        <td><span class="kw">Real</span></td>
+        <td>Número real</td>
+        <td><code>3.14</code>, <code>-0.5</code></td>
+        <td><span class="op">+</span>, <span class="op">-</span>, <span class="op">*</span>, <span class="op">/</span>, <code>abs()</code>, <code>floor()</code>, <code>ceil()</code>, <code>round()</code></td>
+      </tr>
+      <tr>
+        <td><span class="kw">String</span></td>
+        <td>Cadena de texto</td>
+        <td><code>'hola'</code>, <code>'OCL'</code></td>
+        <td><code>size()</code>, <code>concat()</code>, <code>substring()</code>, <code>toUpper()</code>, <code>toLower()</code>, <code>indexOf()</code></td>
+      </tr>
+      <tr>
+        <td><span class="kw">Boolean</span></td>
+        <td>Valor lógico</td>
+        <td><code>true</code>, <code>false</code></td>
+        <td><span class="kw">and</span>, <span class="kw">or</span>, <span class="kw">not</span>, <span class="kw">xor</span>, <span class="kw">implies</span>, <span class="kw">if-then-else</span></td>
+      </tr>
+      <tr>
+        <td><span class="kw">UnlimitedNatural</span></td>
+        <td>Natural + infinito</td>
+        <td><code>0</code>, <code>1</code>, <code>*</code></td>
+        <td>Usado en multiplicidades</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <h3>3.2 Tipos Colección</h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th>Tipo</th>
+        <th>Ordenado</th>
+        <th>Duplicados</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="kw">Set(T)</span></td>
+        <td>No</td>
+        <td>No</td>
+        <td>Conjunto matemático. El más común.</td>
+      </tr>
+      <tr>
+        <td><span class="kw">Bag(T)</span></td>
+        <td>No</td>
+        <td>Sí</td>
+        <td>Como Set pero permite repetidos. Resultado de <code>collect()</code>.</td>
+      </tr>
+      <tr>
+        <td><span class="kw">Sequence(T)</span></td>
+        <td>Sí</td>
+        <td>Sí</td>
+        <td>Lista ordenada con duplicados.</td>
+      </tr>
+      <tr>
+        <td><span class="kw">OrderedSet(T)</span></td>
+        <td>Sí</td>
+        <td>No</td>
+        <td>Conjunto ordenado sin duplicados.</td>
+      </tr>
+    </tbody>
+  </table></div>
+  <div class="callout">
+    La navegación por asociaciones devuelve <span class="kw">Set</span> si la asociación no es ordenada. <code>collect()</code> siempre devuelve <span class="kw">Bag</span>.
+  </div>
+
+  <h3>3.3 Operaciones de String</h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th>Operación</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>concat(s)</code></td>
+        <td>Concatena la cadena con <code>s</code></td>
+      </tr>
+      <tr>
+        <td><code>size()</code></td>
+        <td>Longitud de la cadena</td>
+      </tr>
+      <tr>
+        <td><code>substring(i, j)</code></td>
+        <td>Subcadena desde el índice <code>i</code> hasta <code>j</code> (1-based)</td>
+      </tr>
+      <tr>
+        <td><code>toUpperCase()</code></td>
+        <td>Convierte a mayúsculas</td>
+      </tr>
+      <tr>
+        <td><code>toLowerCase()</code></td>
+        <td>Convierte a minúsculas</td>
+      </tr>
+      <tr>
+        <td><code>indexOf(s)</code></td>
+        <td>Posición de la primera ocurrencia de <code>s</code> (0 si no existe)</td>
+      </tr>
+      <tr>
+        <td><code>includes(s)</code></td>
+        <td>True si la cadena contiene la subcadena <code>s</code></td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <h3>3.4 Operaciones de Boolean</h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th>Operación / Operador</th>
+        <th>Descripción</th>
+        <th>Ejemplo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="kw">and</span></td>
+        <td>Conjunción lógica</td>
+        <td><code>a and b</code></td>
+      </tr>
+      <tr>
+        <td><span class="kw">or</span></td>
+        <td>Disyunción lógica</td>
+        <td><code>a or b</code></td>
+      </tr>
+      <tr>
+        <td><span class="kw">not</span></td>
+        <td>Negación lógica</td>
+        <td><code>not a</code></td>
+      </tr>
+      <tr>
+        <td><span class="kw">xor</span></td>
+        <td>Disyunción exclusiva</td>
+        <td><code>a xor b</code></td>
+      </tr>
+      <tr>
+        <td><span class="kw">implies</span></td>
+        <td>Implicación lógica: <code>(not a) or b</code></td>
+        <td><code>a implies b</code></td>
+      </tr>
+      <tr>
+        <td><span class="kw">if-then-else</span></td>
+        <td>Expresión condicional; devuelve un valor según la condición</td>
+        <td><code>if a then x else y endif</code></td>
+      </tr>
+    </tbody>
+  </table></div>
+  <div class="callout warning">
+    <strong>implies:</strong> <code>a implies b</code> es equivalente a <code>(not a) or b</code>. Solo es <code>false</code> cuando <code>a = true</code> y <code>b = false</code>. En todos los demás casos es <code>true</code>.
+  </div>
+</section>
+
+<!-- §4 OPERACIONES DE COLECCIÓN -->
+<section id="colecciones">
+  <h2 class="section-title"><span class="section-num">§4</span> Operaciones de Colección</h2>
+  <p>
+    Las operaciones de colección se aplican con el operador <span class="op">-&gt;</span>. La mayoría acepta una <strong>expresión iteradora</strong> con la sintaxis
+    <code>coleccion-&gt;operacion(x | expresion_sobre_x)</code>.
+  </p>
+
+  <h3>4.1 Cardinalidad y Existencia</h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th>Operación</th>
+        <th>Tipo retorno</th>
+        <th>Descripción</th>
+        <th>Ejemplo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>-&gt;size()</code></td>
+        <td><span class="kw">Integer</span></td>
+        <td>Número de elementos</td>
+        <td><code>self.employees-&gt;size()</code></td>
+      </tr>
+      <tr>
+        <td><code>-&gt;isEmpty()</code></td>
+        <td><span class="kw">Boolean</span></td>
+        <td>True si la colección está vacía</td>
+        <td><code>self.accounts-&gt;isEmpty()</code></td>
+      </tr>
+      <tr>
+        <td><code>-&gt;notEmpty()</code></td>
+        <td><span class="kw">Boolean</span></td>
+        <td>True si la colección no está vacía</td>
+        <td><code>self.orders-&gt;notEmpty()</code></td>
+      </tr>
+      <tr>
+        <td><code>-&gt;count(obj)</code></td>
+        <td><span class="kw">Integer</span></td>
+        <td>Número de ocurrencias de <code>obj</code></td>
+        <td><code>self.items-&gt;count(item)</code></td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <h3>4.2 Pertenencia</h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th>Operación</th>
+        <th>Tipo retorno</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>-&gt;includes(obj)</code></td>
+        <td><span class="kw">Boolean</span></td>
+        <td>True si <code>obj</code> está en la colección</td>
+      </tr>
+      <tr>
+        <td><code>-&gt;excludes(obj)</code></td>
+        <td><span class="kw">Boolean</span></td>
+        <td>True si <code>obj</code> NO está en la colección</td>
+      </tr>
+      <tr>
+        <td><code>-&gt;includesAll(col)</code></td>
+        <td><span class="kw">Boolean</span></td>
+        <td>True si contiene todos los elementos de <code>col</code></td>
+      </tr>
+      <tr>
+        <td><code>-&gt;excludesAll(col)</code></td>
+        <td><span class="kw">Boolean</span></td>
+        <td>True si no contiene ningún elemento de <code>col</code></td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <h3>4.3 Filtrado</h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th>Operación</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>-&gt;select(x | condición)</code></td>
+        <td>Subcolección con los elementos que <strong>cumplen</strong> la condición</td>
+      </tr>
+      <tr>
+        <td><code>-&gt;reject(x | condición)</code></td>
+        <td>Subcolección con los elementos que <strong>no cumplen</strong> la condición</td>
+      </tr>
+    </tbody>
+  </table></div>
+  <div class="code-block">
+    <pre><code class="language-ocl">-- Empleados mayores de 30
+self.employees->select(e | e.age > 30)
+
+-- Cuentas con saldo negativo
+self.accounts->reject(a | a.balance >= 0)</code></pre>
+  </div>
+
+  <h3>4.4 Transformación</h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th>Operación</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>-&gt;collect(x | expresión)</code></td>
+        <td>Nueva colección (<span class="kw">Bag</span>) aplicando la expresión a cada elemento</td>
+      </tr>
+      <tr>
+        <td><code>-&gt;flatten()</code></td>
+        <td>Aplana colecciones de colecciones en una sola colección</td>
+      </tr>
+    </tbody>
+  </table></div>
+  <div class="callout">
+    <code>collect()</code> siempre retorna un <span class="kw">Bag</span>. Si se necesita un <span class="kw">Set</span>, usar <code>-&gt;collect(...)-&gt;asSet()</code>. Atajo: <code>self.role.propiedad</code> equivale a <code>self.role-&gt;collect(propiedad)</code>.
+  </div>
+  <div class="code-block">
+    <pre><code class="language-ocl">-- Nombres de todos los empleados
+self.employees->collect(e | e.name)
+-- equivalente a:
+self.employees.name
+
+-- Edades únicas de empleados
+self.employees->collect(e | e.age)->asSet()</code></pre>
+  </div>
+
+  <h3>4.5 Cuantificadores</h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th>Operación</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>-&gt;forAll(x | condición)</code></td>
+        <td>True si <strong>todos</strong> los elementos cumplen la condición</td>
+      </tr>
+      <tr>
+        <td><code>-&gt;exists(x | condición)</code></td>
+        <td>True si <strong>al menos uno</strong> cumple la condición</td>
+      </tr>
+      <tr>
+        <td><code>-&gt;one(x | condición)</code></td>
+        <td>True si <strong>exactamente uno</strong> cumple la condición</td>
+      </tr>
+      <tr>
+        <td><code>-&gt;isUnique(x | expresión)</code></td>
+        <td>True si todos los valores de la expresión son distintos entre sí</td>
+      </tr>
+      <tr>
+        <td><code>-&gt;any(x | condición)</code></td>
+        <td>Retorna <strong>un</strong> elemento que cumple la condición (resultado indeterminado)</td>
+      </tr>
+    </tbody>
+  </table></div>
+  <div class="code-block">
+    <pre><code class="language-ocl">-- Todos los empleados son mayores de edad
+self.employees->forAll(e | e.age >= 18)
+
+-- Existe al menos un empleado de IT
+self.employees->exists(e | e.department = 'IT')
+
+-- Exactamente una cuenta está activa
+self.accounts->one(a | a.active = true)
+
+-- Todos los nombres de empleados son únicos
+self.employees->isUnique(e | e.name)
+
+-- forAll con dos variables (pares)
+self.employees->forAll(e1, e2 | e1 <> e2 implies e1.name <> e2.name)</code></pre>
+  </div>
+
+  <h3>4.6 Agregación</h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th>Operación</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>-&gt;sum()</code></td>
+        <td>Suma de todos los elementos numéricos</td>
+      </tr>
+      <tr>
+        <td><code>-&gt;min()</code></td>
+        <td>Elemento mínimo</td>
+      </tr>
+      <tr>
+        <td><code>-&gt;max()</code></td>
+        <td>Elemento máximo</td>
+      </tr>
+      <tr>
+        <td><code>-&gt;sortedBy(x | expr)</code></td>
+        <td>Retorna una <span class="kw">Sequence</span> ordenada según la expresión <code>expr</code></td>
+      </tr>
+    </tbody>
+  </table></div>
+  <div class="code-block">
+    <pre><code class="language-ocl">-- Suma de puntos de todas las cuentas
+self.accounts->collect(a | a.points)->sum()
+
+-- Empleados ordenados por salario
+self.employees->sortedBy(e | e.salary)</code></pre>
+  </div>
+
+  <h3>4.7 Operaciones de Conjunto</h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th>Operación</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>-&gt;union(col)</code></td>
+        <td>Unión de las dos colecciones</td>
+      </tr>
+      <tr>
+        <td><code>-&gt;intersection(col)</code></td>
+        <td>Intersección: elementos comunes a ambas</td>
+      </tr>
+      <tr>
+        <td><code>-&gt;including(obj)</code></td>
+        <td>Nueva colección añadiendo <code>obj</code></td>
+      </tr>
+      <tr>
+        <td><code>-&gt;excluding(obj)</code></td>
+        <td>Nueva colección eliminando todas las ocurrencias de <code>obj</code></td>
+      </tr>
+      <tr>
+        <td><code>-&gt;symmetricDifference(col)</code></td>
+        <td>Diferencia simétrica — solo disponible en <span class="kw">Set</span></td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <h3>4.8 Conversión entre Colecciones</h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th>Operación</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>-&gt;asSet()</code></td>
+        <td>Convierte a <span class="kw">Set</span> (elimina duplicados)</td>
+      </tr>
+      <tr>
+        <td><code>-&gt;asBag()</code></td>
+        <td>Convierte a <span class="kw">Bag</span></td>
+      </tr>
+      <tr>
+        <td><code>-&gt;asSequence()</code></td>
+        <td>Convierte a <span class="kw">Sequence</span></td>
+      </tr>
+      <tr>
+        <td><code>-&gt;asOrderedSet()</code></td>
+        <td>Convierte a <span class="kw">OrderedSet</span></td>
+      </tr>
+    </tbody>
+  </table></div>
+  <div class="callout tip">
+    Usar <code>-&gt;asSet()-&gt;size() = col-&gt;size()</code> para verificar que una colección no contiene duplicados.
+  </div>
+</section>
+
+<!-- §5 NAVEGACIÓN -->
+<section id="navegacion">
+  <h2 class="section-title"><span class="section-num">§5</span> Navegación</h2>
+
+  <h3>5.1 Operadores <span class="op">.</span> y <span class="op">-&gt;</span></h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th>Operador</th>
+        <th>Aplicado a</th>
+        <th>Uso</th>
+        <th>Ejemplo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="op">.</span></td>
+        <td>Objeto individual</td>
+        <td>Acceder a una propiedad o llamar a una operación de objeto</td>
+        <td><code>self.age</code>, <code>self.name.toUpperCase()</code></td>
+      </tr>
+      <tr>
+        <td><span class="op">-&gt;</span></td>
+        <td>Colección</td>
+        <td>Aplicar una operación de colección</td>
+        <td><code>self.employees-&gt;size()</code></td>
+      </tr>
+      <tr>
+        <td><span class="op">-&gt;</span></td>
+        <td>Objeto individual</td>
+        <td>Auto-eleva el objeto a <span class="kw">Set</span>{obj} y aplica la operación de colección</td>
+        <td><code>self-&gt;includes(x)</code></td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <h3>5.2 Navegación por Asociaciones</h3>
+  <p>
+    Se navega usando el <strong>nombre del rol</strong> en el extremo opuesto de la asociación.
+  </p>
+  <div class="code-block">
+    <pre><code class="language-ocl">-- Si Person tiene asociación con Company (rol: employer)
+context Person
+inv: self.employer.name <> ''
+
+-- Si Company tiene asociación con Person (rol: employees, multiplicidad *)
+context Company
+inv: self.employees->size() > 0</code></pre>
+  </div>
+  <div class="callout">
+    Cuando la multiplicidad es <code>0..1</code> o <code>1</code>, la navegación devuelve un objeto (o <code>null</code>). Cuando es <code>*</code>, devuelve una colección.
+  </div>
+
+  <h3>5.3 Atajo de Navegación con <code>collect</code></h3>
+  <div class="code-block">
+    <pre><code class="language-ocl">-- Estas dos expresiones son equivalentes:
+self.employees.name
+self.employees->collect(e | e.name)
+
+-- Y estas también:
+self.flights.passengers.name
+self.flights->collect(f | f.passengers)->collect(p | p.name)</code></pre>
+  </div>
+
+  <h3>5.4 Navegación desde/hacia Clase Asociación</h3>
+  <div class="code-block">
+    <pre><code class="language-ocl">-- Navegando HACIA la clase asociación (usar nombre de rol de la clase asoc.)
+-- Si Marriage es clase asociación entre Person (husband/wife)
+context Person
+inv: self.Marriage->notEmpty() implies self.age > 16
+
+-- Navegando DESDE la clase asociación
+context Marriage
+inv: self.husband.age > 16 and self.wife.age > 16</code></pre>
+  </div>
+
+  <h3>5.5 Operaciones OCL sobre Objetos</h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th>Operación</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>oclIsTypeOf(T)</code></td>
+        <td>True si el objeto es <strong>exactamente</strong> del tipo <code>T</code> (no subtipos)</td>
+      </tr>
+      <tr>
+        <td><code>oclIsKindOf(T)</code></td>
+        <td>True si el objeto es del tipo <code>T</code> o cualquier subtipo de <code>T</code></td>
+      </tr>
+      <tr>
+        <td><code>oclAsType(T)</code></td>
+        <td>Cast: trata el objeto como tipo <code>T</code>, dando acceso a sus propiedades</td>
+      </tr>
+      <tr>
+        <td><code>oclIsUndefined()</code></td>
+        <td>True si el objeto es <code>null</code> o no está definido</td>
+      </tr>
+      <tr>
+        <td><code>oclIsNew()</code></td>
+        <td>True si el objeto fue creado durante esta operación (solo válido en postcondiciones)</td>
+      </tr>
+    </tbody>
+  </table></div>
+  <div class="code-block">
+    <pre><code class="language-ocl">-- Verificar tipo exacto
+self.pet.oclIsTypeOf(Dog)  -- true solo si es Dog, no Poodle
+
+-- Verificar tipo o subtipo
+self.pet.oclIsKindOf(Animal)  -- true para Dog, Cat, etc.
+
+-- Cast para acceder a propiedades de subtipo
+self.oclAsType(Employee).salary
+
+-- Acceder a propiedad redefinida de superclase
+self.oclAsType(Person).age</code></pre>
+  </div>
+
+  <h3>5.6 <code>allInstances()</code> y Propiedades Estáticas</h3>
+  <div class="code-block">
+    <pre><code class="language-ocl">-- Todas las instancias de una clase
+context Person
+inv nombresUnicos: Person.allInstances()->isUnique(p | p.name)
+
+-- Acceso a atributo/operación estática
+context MyClass
+inv: MyClass::maxInstances > 0</code></pre>
+  </div>
+
+  <h3>5.7 Expresión <span class="kw">if-then-else</span></h3>
+  <div class="code-block">
+    <pre><code class="language-ocl">if &lt;condición&gt; then
+    &lt;expresión_si_verdadero&gt;
+else
+    &lt;expresión_si_falso&gt;
+endif
+
+-- Ejemplo:
+context Person
+inv: if self.age < 18 then
+         self.income < 100
+     else
+         self.income < 200
+     endif</code></pre>
+  </div>
+
+  <h3>5.8 Expresión <span class="kw">let</span></h3>
+  <div class="code-block">
+    <pre><code class="language-ocl">let &lt;variable&gt; : &lt;Tipo&gt; = &lt;expresión&gt;
+in &lt;expresión_que_usa_variable&gt;
+
+-- Ejemplo:
+context Person
+inv salarioRazonable:
+    let ingresoAnual : Real = self.income * 12
+    in ingresoAnual < 1000000
+
+-- Puede encadenarse:
+let x : Integer = self.value * 2
+in let y : Integer = x + 10
+   in y > 0</code></pre>
+  </div>
+
+  <h3>5.9 Tuplas</h3>
+  <div class="code-block">
+    <pre><code class="language-ocl">-- Definir una tupla
+Tuple{nombre: String = 'Juan', edad: Integer = 30}
+
+-- Acceder a campos
+miTupla.nombre
+
+-- Colección de tuplas (ejemplo común)
+context Person
+let estadisticas : Set(Tuple(nombre: String, salario: Real)) =
+    self.employees->collect(e | Tuple{nombre = e.name, salario = e.salary})
+in estadisticas->forAll(t | t.salario > 0)</code></pre>
+  </div>
+</section>
+
+<!-- ============================================================
+     §6  HERENCIA Y DESIGN BY CONTRACT
+     ============================================================ -->
+<section id="herencia">
+  <h2 class="section-title"><span class="section-num">§6</span> Herencia y Design by Contract</h2>
+
+  <h3>6.1 Principio de Sustitución de Liskov</h3>
+  <div class="callout">
+    "Una subclase debe poder usarse en cualquier lugar donde se use la superclase
+    sin violar las restricciones del sistema."
+  </div>
+
+  <p>Implicaciones en OCL:</p>
+  <ul>
+    <li>Los <strong>invariantes</strong> de la superclase se <strong>HEREDAN</strong> automáticamente:
+        toda instancia de la subclase debe cumplir los invariantes de la superclase
+        <em>y</em> los propios.</li>
+    <li>Las <strong>precondiciones</strong> de operaciones redefinidas solo pueden
+        <strong>DEBILITARSE</strong> (or con la precondición padre).</li>
+    <li>Las <strong>postcondiciones</strong> de operaciones redefinidas solo pueden
+        <strong>FORTALECERSE</strong> (and con la postcondición padre).</li>
+  </ul>
+
+  <h3>6.2 Invariantes e Herencia</h3>
+  <div class="code-block">
+    <pre><code class="language-ocl">context Stove
+inv temperaturaMaxima: self.temperature &lt;= 200
+
+-- La subclase Oven hereda el invariante.
+-- Puede agregar más restricciones:
+context Oven
+inv modoValido: self.mode = #bake or self.mode = #grill
+-- Oven debe cumplir: temperature &lt;= 200 AND (mode = bake or mode = grill)</code></pre>
+  </div>
+
+  <h3>6.3 Pre/Post condiciones e Herencia</h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Superclase</th>
+        <th>Subclase</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Precondición</strong></td>
+        <td><code>pre: condA</code></td>
+        <td><code>pre: condA <strong>or</strong> condNueva</code> (debilitada)</td>
+      </tr>
+      <tr>
+        <td><strong>Postcondición</strong></td>
+        <td><code>post: condB</code></td>
+        <td><code>post: condB <strong>and</strong> condNueva</code> (fortalecida)</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <div class="code-block">
+    <pre><code class="language-ocl">-- Superclase
+context Stove::open()
+pre  apagarAntes: not self.isOn
+post abierto:     self.isOpen = true
+
+-- Subclase MicrowaveOven redefine open():
+-- PRE debilitada (más permisiva):
+context MicrowaveOven::open()
+pre: not self.isOn or self.power = 0  -- permite abrir si potencia = 0
+
+-- POST fortalecida (más restrictiva):
+context MicrowaveOven::open()
+post: self.isOpen = true and self.light = true  -- además enciende la luz</code></pre>
+  </div>
+
+  <h3>6.4 oclAsType para acceder a la superclase</h3>
+  <div class="code-block">
+    <pre><code class="language-ocl">-- Si Employee redefine 'age' pero queremos el age de Person:
+context Employee
+inv: self.oclAsType(Person).age >= 0
+
+-- Verificar tipo antes de castear:
+context Collection
+inv: self->forAll(e |
+    e.oclIsKindOf(Employee) implies
+    e.oclAsType(Employee).salary > 0)</code></pre>
+  </div>
+
+  <h3>6.5 Ejemplo Completo (ClassicGuitar)</h3>
+  <div class="code-block">
+    <pre><code class="language-ocl">-- ClassicGuitar hereda de Guitar
+-- Invariante: todas las cuerdas son de plástico
+context ClassicGuitar
+inv soloPlastico:
+    strings->select(s | s.oclIsTypeOf(PlasticString))->size() = strings->size()
+
+-- Equivalente usando forAll:
+context ClassicGuitar
+inv soloPlastico:
+    strings->forAll(s | s.oclIsTypeOf(PlasticString))</code></pre>
+  </div>
+</section>
+
+
+
+<!-- ============================================================
+     §7  HOJA CHULETA
+     ============================================================ -->
+<section id="chuleta">
+  <h2 class="section-title"><span class="section-num">§7</span> Hoja Chuleta</h2>
+  <button onclick="window.print()" class="print-btn">Imprimir Chuleta</button>
+
+  <style>
+    /* Chuleta grid: 2 columns on screen and on print */
+    .chuleta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    .chuleta-col { min-width: 0; }
+    .chuleta-subtitle {
+      font-weight: 700;
+      margin: 1rem 0 0.4rem;
+      color: #2d6a4f;
+      font-size: 0.95rem;
+      border-bottom: 1px solid #b7e4c7;
+      padding-bottom: 0.2rem;
+    }
+    @media (max-width: 700px) {
+      .chuleta-grid { grid-template-columns: 1fr; }
+    }
+    @media print {
+      .chuleta-grid { grid-template-columns: 1fr 1fr; page-break-inside: avoid; }
+      .print-btn { display: none; }
+    }
+  </style>
+
+  <div class="chuleta-content chuleta-grid">
+
+    <!-- ── Column 1 ── -->
+    <div class="chuleta-col">
+
+      <div class="chuleta-subtitle">Las 6 formas de uso</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <thead>
+          <tr><th>Forma</th><th>Sintaxis</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Invariante</td>          <td><code>context Clase inv: &lt;bool&gt;</code></td></tr>
+          <tr><td>Valor inicial</td>        <td><code>context Clase::attr init: &lt;expr&gt;</code></td></tr>
+          <tr><td>Atributo derivado</td>    <td><code>context Clase::attr derive: &lt;expr&gt;</code></td></tr>
+          <tr><td>Cuerpo de consulta</td>   <td><code>context Clase::op() body: &lt;expr&gt;</code></td></tr>
+          <tr><td>Precondición</td>         <td><code>context Clase::op() pre: &lt;bool&gt;</code></td></tr>
+          <tr><td>Postcondición</td>        <td><code>context Clase::op() post: &lt;bool&gt;</code></td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="chuleta-subtitle">Palabras clave especiales</div>
+      <ul>
+        <li><code>self</code> → la instancia actual</li>
+        <li><code>result</code> → valor retornado por la operación (en post)</li>
+        <li><code>atributo@pre</code> → valor del atributo antes de la operación (en post)</li>
+        <li><code>oclIsNew()</code> → objeto recién creado (en post)</li>
+      </ul>
+
+      <div class="chuleta-subtitle">Tipos colección</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <thead>
+          <tr><th>Tipo</th><th>Ord</th><th>Dup</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>Set(T)</code></td>        <td>✗</td><td>✗</td></tr>
+          <tr><td><code>Bag(T)</code></td>        <td>✗</td><td>✓</td></tr>
+          <tr><td><code>Sequence(T)</code></td>   <td>✓</td><td>✓</td></tr>
+          <tr><td><code>OrderedSet(T)</code></td> <td>✓</td><td>✗</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="chuleta-subtitle">Operadores . vs -&gt;</div>
+      <ul>
+        <li><code>.</code> → objeto → propiedad / operación</li>
+        <li><code>-&gt;</code> → colección → operación de colección</li>
+        <li><code>self.role.attr</code> ≡ <code>self.role-&gt;collect(attr)</code></li>
+      </ul>
+
+    </div><!-- /col 1 -->
+
+    <!-- ── Column 2 ── -->
+    <div class="chuleta-col">
+
+      <div class="chuleta-subtitle">Operaciones de colección</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <thead>
+          <tr><th>Op</th><th>Descripción</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>-&gt;size()</code></td>                           <td>Número de elementos</td></tr>
+          <tr><td><code>-&gt;isEmpty()</code> / <code>-&gt;notEmpty()</code></td><td>Vacía / No vacía</td></tr>
+          <tr><td><code>-&gt;includes(x)</code> / <code>-&gt;excludes(x)</code></td><td>Pertenencia</td></tr>
+          <tr><td><code>-&gt;select(x|cond)</code></td>                   <td>Filtrar los que cumplen</td></tr>
+          <tr><td><code>-&gt;reject(x|cond)</code></td>                   <td>Filtrar los que NO cumplen</td></tr>
+          <tr><td><code>-&gt;collect(x|expr)</code></td>                  <td>Transformar (→ Bag)</td></tr>
+          <tr><td><code>-&gt;forAll(x|cond)</code></td>                   <td>Todos cumplen</td></tr>
+          <tr><td><code>-&gt;exists(x|cond)</code></td>                   <td>Alguno cumple</td></tr>
+          <tr><td><code>-&gt;one(x|cond)</code></td>                      <td>Exactamente uno</td></tr>
+          <tr><td><code>-&gt;isUnique(x|expr)</code></td>                 <td>Todos distintos</td></tr>
+          <tr><td><code>-&gt;sum()</code></td>                            <td>Suma</td></tr>
+          <tr><td><code>-&gt;sortedBy(x|expr)</code></td>                 <td>Ordenar (→ Seq.)</td></tr>
+          <tr><td><code>-&gt;union(c)</code> / <code>-&gt;intersection(c)</code></td><td>Unión / Intersección</td></tr>
+          <tr><td><code>-&gt;asSet()</code> / <code>-&gt;asBag()</code></td><td>Conversión</td></tr>
+          <tr><td><code>-&gt;count(x)</code></td>                         <td>Ocurrencias de x</td></tr>
+          <tr><td><code>-&gt;flatten()</code></td>                        <td>Aplanar</td></tr>
+          <tr><td><code>-&gt;any(x|cond)</code></td>                      <td>Un elemento cualquiera</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="chuleta-subtitle">Tipos y cast</div>
+      <div class="ref-table-wrap"><table class="ref-table">
+        <thead>
+          <tr><th>Op</th><th>Descripción</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>oclIsTypeOf(T)</code></td>  <td>Tipo exacto</td></tr>
+          <tr><td><code>oclIsKindOf(T)</code></td>  <td>Tipo o subtipo</td></tr>
+          <tr><td><code>oclAsType(T)</code></td>    <td>Cast</td></tr>
+          <tr><td><code>allInstances()</code></td>  <td>Todas las instancias</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="chuleta-subtitle">Herencia (Liskov)</div>
+      <ul>
+        <li><strong>Invariantes:</strong> se heredan (subclase debe cumplir los de la superclase)</li>
+        <li><strong>Pre:</strong> subclase puede DEBILITAR (<code>pre_sub or pre_super</code>)</li>
+        <li><strong>Post:</strong> subclase puede FORTALECER (<code>post_sub and post_super</code>)</li>
+      </ul>
+
+    </div><!-- /col 2 -->
+
+  </div><!-- /chuleta-grid -->
+</section>
+
+
+<!-- ============================================================
+     §8  TIPS: OCL ↔ LENGUAJE NATURAL
+     ============================================================ -->
+<section id="tips">
+  <h2 class="section-title"><span class="section-num">§8</span> Tips: OCL ↔ Lenguaje Natural</h2>
+  <p>Tabla de patrones para traducir entre lenguaje natural y OCL en ambas direcciones.</p>
+
+  <h3>9.1 De Lenguaje Natural a OCL</h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th>Patrón en Lenguaje Natural</th>
+        <th>OCL</th>
+        <th>Notas</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>"Todo X debe cumplir Y"</td>
+        <td><code>context X inv: &lt;Y&gt;</code></td>
+        <td>Self es la instancia de X</td>
+      </tr>
+      <tr>
+        <td>"Todos los [col] deben…"</td>
+        <td><code>col-&gt;forAll(x | ...)</code></td>
+        <td>Cuantificador universal</td>
+      </tr>
+      <tr>
+        <td>"Al menos uno de [col] debe…"</td>
+        <td><code>col-&gt;exists(x | ...)</code></td>
+        <td>Cuantificador existencial</td>
+      </tr>
+      <tr>
+        <td>"Exactamente uno de [col]…"</td>
+        <td><code>col-&gt;one(x | ...)</code></td>
+        <td>Exactamente 1</td>
+      </tr>
+      <tr>
+        <td>"Ninguno de [col]…"</td>
+        <td><code>col-&gt;forAll(x | not ...)</code> o <code>col-&gt;select(x|...)-&gt;isEmpty()</code></td>
+        <td>Negación universal</td>
+      </tr>
+      <tr>
+        <td>"El número de [col] no puede superar N"</td>
+        <td><code>col-&gt;size() &lt;= N</code></td>
+        <td>Cardinalidad máxima</td>
+      </tr>
+      <tr>
+        <td>"El número de [col] es exactamente N"</td>
+        <td><code>col-&gt;size() = N</code></td>
+        <td>Cardinalidad exacta</td>
+      </tr>
+      <tr>
+        <td>"Existe al menos un…"</td>
+        <td><code>...-&gt;exists(x | ...)</code></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>"El atributo se calcula como…"</td>
+        <td><code>derive: &lt;expr&gt;</code></td>
+        <td>Atributo derivado</td>
+      </tr>
+      <tr>
+        <td>"Al crear el objeto, el valor es…"</td>
+        <td><code>init: &lt;valor&gt;</code></td>
+        <td>Valor inicial</td>
+      </tr>
+      <tr>
+        <td>"Para ejecutar la op., se requiere…"</td>
+        <td><code>pre: &lt;condición&gt;</code></td>
+        <td>Precondición</td>
+      </tr>
+      <tr>
+        <td>"Al terminar la op., se garantiza…"</td>
+        <td><code>post: &lt;condición&gt;</code></td>
+        <td>Postcondición</td>
+      </tr>
+      <tr>
+        <td>"El resultado de la operación es…"</td>
+        <td><code>post: result = &lt;expr&gt;</code></td>
+        <td><code>result</code> en postcondición</td>
+      </tr>
+      <tr>
+        <td>"El valor de X antes de ejecutar…"</td>
+        <td><code>X@pre</code></td>
+        <td>Solo en postcondiciones</td>
+      </tr>
+      <tr>
+        <td>"Los [col] que cumplen…"</td>
+        <td><code>col-&gt;select(x | ...)</code></td>
+        <td>Filtro</td>
+      </tr>
+      <tr>
+        <td>"Para cada X, calcular Y"</td>
+        <td><code>col-&gt;collect(x | Y)</code></td>
+        <td>Transformación</td>
+      </tr>
+      <tr>
+        <td>"La suma de todos los…"</td>
+        <td><code>col-&gt;collect(...)-&gt;sum()</code></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>"No hay duplicados en…"</td>
+        <td><code>col-&gt;isUnique(x | ...)</code></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>"X es de tipo exacto Y"</td>
+        <td><code>x.oclIsTypeOf(Y)</code></td>
+        <td>Tipo exacto</td>
+      </tr>
+      <tr>
+        <td>"X es de tipo Y (o subtipo)"</td>
+        <td><code>x.oclIsKindOf(Y)</code></td>
+        <td>Tipo o herencia</td>
+      </tr>
+      <tr>
+        <td>"Tratando X como Y"</td>
+        <td><code>x.oclAsType(Y)</code></td>
+        <td>Downcast explícito</td>
+      </tr>
+      <tr>
+        <td>"Para todas las instancias de la clase…"</td>
+        <td><code>Clase.allInstances()-&gt;...</code></td>
+        <td>Scope global</td>
+      </tr>
+      <tr>
+        <td>"Si A entonces B, si no C"</td>
+        <td><code>if A then B else C endif</code></td>
+        <td>Expresión condicional</td>
+      </tr>
+      <tr>
+        <td>"Sea variable = expr, entonces…"</td>
+        <td><code>let var: T = expr in ...</code></td>
+        <td>Variable local</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <h3>9.2 De OCL a Lenguaje Natural</h3>
+  <div class="ref-table-wrap"><table class="ref-table">
+    <thead>
+      <tr>
+        <th>OCL</th>
+        <th>Lenguaje Natural</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>context C inv nombre: self.attr &gt;= 0</code></td>
+        <td>"Todo objeto C debe tener attr no negativo"</td>
+      </tr>
+      <tr>
+        <td><code>col-&gt;forAll(x | x.active)</code></td>
+        <td>"Todos los elementos de col deben estar activos"</td>
+      </tr>
+      <tr>
+        <td><code>col-&gt;exists(x | x.priority = 'HIGH')</code></td>
+        <td>"Debe existir al menos un elemento en col con prioridad HIGH"</td>
+      </tr>
+      <tr>
+        <td><code>col-&gt;one(x | x.isDefault)</code></td>
+        <td>"Exactamente un elemento de col debe ser el predeterminado"</td>
+      </tr>
+      <tr>
+        <td><code>col-&gt;select(x | x.age &gt; 18)-&gt;size() &gt;= 2</code></td>
+        <td>"Debe haber al menos 2 elementos en col con edad mayor a 18"</td>
+      </tr>
+      <tr>
+        <td><code>col-&gt;collect(x | x.name)-&gt;asSet()-&gt;size() = col-&gt;size()</code></td>
+        <td>"Todos los nombres en col son únicos"</td>
+      </tr>
+      <tr>
+        <td><code>self.salary@pre &lt; self.salary</code></td>
+        <td>"El salario aumentó respecto al valor anterior a la operación"</td>
+      </tr>
+      <tr>
+        <td><code>self.oclIsKindOf(Employee) implies self.salary &gt; 0</code></td>
+        <td>"Si el objeto es un empleado (o subtipo), su salario debe ser positivo"</td>
+      </tr>
+      <tr>
+        <td><code>Persona.allInstances()-&gt;isUnique(p | p.dni)</code></td>
+        <td>"No existen dos personas con el mismo DNI"</td>
+      </tr>
+      <tr>
+        <td><code>col-&gt;size() &lt;= 5</code></td>
+        <td>"La colección no puede tener más de 5 elementos"</td>
+      </tr>
+      <tr>
+        <td><code>result = col-&gt;select(x | x.active)-&gt;size()</code></td>
+        <td>"La operación devuelve el número de elementos activos en col"</td>
+      </tr>
+    </tbody>
+  </table></div>
+
+  <h3>9.3 Errores Comunes</h3>
+  <div class="callout warning">
+    <strong>Errores frecuentes</strong>
+    <ol>
+      <li><strong>Usar <code>.</code> en colecciones:</strong>
+          <code>self.employees.size()</code> ❌ → <code>self.employees-&gt;size()</code> ✓</li>
+      <li><strong>Olvidar <code>self</code>:</strong>
+          <code>employees-&gt;size()</code> puede funcionar dentro de <code>context</code>,
+          pero es mejor explícito.</li>
+      <li><strong>collect vs select:</strong>
+          <code>collect</code> transforma, <code>select</code> filtra. No confundir.</li>
+      <li><strong>@pre solo en post:</strong>
+          <code>atributo@pre</code> solo es válido en postcondiciones.</li>
+      <li><strong>result solo en post/body:</strong>
+          <code>result</code> solo en postcondiciones y body de operaciones.</li>
+      <li><strong>Set vs Bag:</strong>
+          La navegación devuelve Set, <code>collect()</code> devuelve Bag.
+          Si necesitas set: <code>-&gt;asSet()</code>.</li>
+      <li><strong>oclIsTypeOf vs oclIsKindOf:</strong>
+          <code>oclIsTypeOf(Dog)</code> es false para un <code>Poodle</code>.
+          Usar <code>oclIsKindOf</code> para incluir subtipos.</li>
+    </ol>
+  </div>
+</section>
+
+         <section id="ejercicios">
+          <h2 class="section-title"><span class="section-num">§9</span> Ejercicios Prácticos</h2>
+          <p>Los siguientes ejercicios provienen del práctico de la materia. Intentá resolver cada ejercicio antes de ver la solución.</p>
+
+          <!-- ═══════════════════════════════════════════════════════════════ -->
+          <!-- EJERCICIO 1                                                      -->
+          <!-- ═══════════════════════════════════════════════════════════════ -->
+          <h3>Ejercicio 1 — Modelo Personal / Empresa / Banco</h3>
+          <p>
+            Clases del modelo: <code>Person</code> (name, firstName, lastName, age, income(d:Date):Real, isMarried:Boolean, gender:Gender),
+            <code>Company</code> (name, numberOfEmployers:Integer),
+            <code>BankAccount</code> (balance:Real, accountNumber:String).
+            Clases de asociación: <code>Marriage</code> (entre Person husband ↔ Person wife, date:Date),
+            <code>Job</code> (entre Person employee ↔ Company employer, salary:Real, startDate:Date).
+            Enumeración: <code>Gender</code> {male, female}.
+          </p>
+
+          <!-- ─── Parte A ─────────────────────────────────────────────────── -->
+          <h4>Parte A — Traducir OCL a Lenguaje Natural <span class="badge badge-ocl2nl">OCL → Natural</span></h4>
+
+          <!-- A.a -->
+          <div class="exercise-card">
+            <p><strong>(a)</strong> <span class="badge badge-ocl2nl">OCL → Natural</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>¿Qué expresa la siguiente expresión en lenguaje natural?</p>
+              <div class="code-block"><pre><code class="language-ocl">context Person
+inv: self.isMarried implies self.age > 15</code></pre></div>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <p>Si una persona está casada, entonces debe tener más de 15 años. Es decir, no se permiten matrimonios de personas de 15 años o menos.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- A.b -->
+          <div class="exercise-card">
+            <p><strong>(b)</strong> <span class="badge badge-ocl2nl">OCL → Natural</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>¿Qué expresa la siguiente expresión en lenguaje natural?</p>
+              <div class="code-block"><pre><code class="language-ocl">context Company
+inv: self.numberOfEmployees = self.employee->size()</code></pre></div>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <p>El atributo <code>numberOfEmployees</code> debe ser igual al número real de empleados de la empresa (tamaño de la colección <code>employee</code>).</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- A.c -->
+          <div class="exercise-card">
+            <p><strong>(c)</strong> <span class="badge badge-ocl2nl">OCL → Natural</span> <span class="badge badge-pre">pre</span> <span class="badge badge-post">post</span></p>
+            <div class="exercise-statement">
+              <p>¿Qué expresan las siguientes pre y post condiciones?</p>
+              <div class="code-block"><pre><code class="language-ocl">context Person::income(d: Date): Real
+pre:  d > self.birthDate
+post: if self.age &lt; 18 then result &lt; 100 else result &lt; 200 endif</code></pre></div>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <p><strong>Precondición:</strong> la fecha consultada debe ser posterior a la fecha de nacimiento de la persona.</p>
+                <p><strong>Postcondición:</strong> si la persona es menor de edad, su ingreso para esa fecha es menor a 100; si es mayor de edad, su ingreso es menor a 200.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- A.d -->
+          <div class="exercise-card">
+            <p><strong>(d)</strong> <span class="badge badge-ocl2nl">OCL → Natural</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>¿Qué expresan estas dos restricciones? ¿Cuál es la diferencia entre ellas?</p>
+              <div class="code-block"><pre><code class="language-ocl">-- Restricción 1
+context Person
+inv: BankAccount.allInstances()->collect(b | b.owner)->asSet()->size() = 3
+
+-- Restricción 2
+context Person
+inv: BankAccount.allInstances()->collect(b | b.owner)->size() = 3</code></pre></div>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <p><strong>Restricción 1:</strong> El número de <em>propietarios distintos</em> de cuentas bancarias es exactamente 3. Se usa <code>asSet()</code> para eliminar duplicados de personas que tienen más de una cuenta.</p>
+                <p><strong>Restricción 2:</strong> El número <em>total</em> de pares (propietario, cuenta) es exactamente 3, es decir, hay exactamente 3 cuentas bancarias en total (sin eliminar duplicados).</p>
+                <p><strong>Diferencia:</strong> <code>asSet()</code> elimina duplicados, por lo que la restricción 1 cuenta personas únicas y la restricción 2 cuenta el total de cuentas.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- A.e -->
+          <div class="exercise-card">
+            <p><strong>(e)</strong> <span class="badge badge-ocl2nl">OCL → Natural</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>¿Qué expresa la siguiente restricción?</p>
+              <div class="code-block"><pre><code class="language-ocl">context Person
+inv: self.Marriage[husband]->size() &lt;= 1 and
+     self.Marriage[wife]->size() &lt;= 1</code></pre></div>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <p>Una persona no puede ser marido en más de un matrimonio, y tampoco puede ser esposa en más de un matrimonio. Es decir, una persona solo puede estar casada una vez a la vez (en cada rol).</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- A.f -->
+          <div class="exercise-card">
+            <p><strong>(f)</strong> <span class="badge badge-ocl2nl">OCL → Natural</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>¿Qué expresa la siguiente restricción?</p>
+              <div class="code-block"><pre><code class="language-ocl">context Person
+inv: self.gender = Gender::male implies
+         self.Marriage[wife]->isEmpty()</code></pre></div>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <p>Si una persona es de género masculino, no puede aparecer en ningún matrimonio en el rol de "esposa". Es decir, los hombres solo pueden estar en el rol de "marido" en un matrimonio.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- A.g -->
+          <div class="exercise-card">
+            <p><strong>(g)</strong> <span class="badge badge-ocl2nl">OCL → Natural</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>¿Qué expresa la siguiente restricción?</p>
+              <div class="code-block"><pre><code class="language-ocl">context Person
+inv: self.Job->collect(job | 
+         Tuple{salario: Real = job.salary, 
+               compania: String = job.employer.name})
+     ->isUnique(t | t.compania)</code></pre></div>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <p>Una persona no puede tener dos trabajos en empresas con el mismo nombre. Es decir, por cada empresa (identificada por nombre), una persona puede tener a lo sumo un trabajo.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─── Parte B ─────────────────────────────────────────────────── -->
+          <h4>Parte B — Escribir expresiones OCL <span class="badge badge-nl2ocl">Natural → OCL</span></h4>
+
+          <!-- B.a -->
+          <div class="exercise-card">
+            <p><strong>(a)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>Expresar que el nombre y el apellido de una persona no puede tener más de 20 caracteres.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Person
+inv nombreCorto:   self.firstName.size() &lt;= 20
+inv apellidoCorto: self.lastName.size()  &lt;= 20</code></pre></div>
+                <div class="callout">
+                  <p>Se pueden expresar como dos invariantes separadas o como una sola con <code>and</code>:</p>
+                  <div class="code-block"><pre><code class="language-ocl">context Person
+inv: self.firstName.size() &lt;= 20 and self.lastName.size() &lt;= 20</code></pre></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- B.b -->
+          <div class="exercise-card">
+            <p><strong>(b)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>Expresar que los gerentes (<em>managers</em>) de una empresa deben ser empleados de dicha empresa. Escribirlo de dos formas: con contexto en <code>Person</code> y con contexto en <code>Company</code>.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">-- Opción 1: contexto en Person
+context Person
+inv: self.employer->forAll(c | c.manager = self implies
+         self.employee->includes(self))
+
+-- Opción 2: contexto en Company (más clara)
+context Company
+inv gerentes: self.manager->forAll(m | self.employee->includes(m))</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- B.c -->
+          <div class="exercise-card">
+            <p><strong>(c)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>Expresar que toda empresa tiene al menos una empleada de género femenino.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Company
+inv empleadaFemenina:
+    self.employee->exists(p | p.gender = Gender::female)</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- B.d -->
+          <div class="exercise-card">
+            <p><strong>(d)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>Expresar que ninguna persona puede tener más de 5 cuentas bancarias.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Person
+inv maxCuentas: self.bankAccount->size() &lt;= 5</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- B.e -->
+          <div class="exercise-card">
+            <p><strong>(e)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>Expresar que ningún cliente (persona con al menos una cuenta bancaria) puede tener más de 5 cuentas.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Person
+inv maxCuentasCliente:
+    self.bankAccount->notEmpty() implies self.bankAccount->size() &lt;= 5</code></pre></div>
+                <div class="callout">
+                  <p>La diferencia con (d) es que aquí solo aplica la restricción a quienes <em>ya tienen</em> al menos una cuenta. Con (d) aplica a todas las personas. En la práctica, si una persona sin cuentas no puede tener más de 5, la restricción (d) es equivalente.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- B.f -->
+          <div class="exercise-card">
+            <p><strong>(f)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>Expresar que ninguna persona tiene dos trabajos en empresas con el mismo nombre.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Person
+inv sinDuplicadosEmpresa:
+    self.Job->isUnique(j | j.employer.name)</code></pre></div>
+                <div class="callout">
+                  <p>También es válido con <code>forAll</code>:</p>
+                  <div class="code-block"><pre><code class="language-ocl">context Person
+inv: self.Job->forAll(j1, j2 |
+         j1 &lt;> j2 implies j1.employer.name &lt;> j2.employer.name)</code></pre></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════════════════════ -->
+          <!-- EJERCICIO 2                                                      -->
+          <!-- ═══════════════════════════════════════════════════════════════ -->
+          <h3>Ejercicio 2 — Modelo Electoral</h3>
+          <p>
+            Clases del modelo:
+            <code>Persona</code> (dni:String, tipoDoc:TipoDocumento, nombre:String, apellido:String, genero:Genero, fechaNac:Fecha, edad:Integer[derived], domicilio:String, estudios:NivelEstudios),
+            <code>Afiliado extends Persona</code> (numAfiliado:Integer, fechaAfiliacion:Fecha, activo:Boolean),
+            <code>Partido</code> (nombre:String, ambito:Ambito, presidente:Afiliado, afiliados:Set(Afiliado), electores:Set(Persona)),
+            <code>Mesa</code> (numero:Integer, maximo:Integer[static,init:100], electores:Set(Persona)),
+            <code>Circuito</code> (nombre:String, mesas:Set(Mesa)).
+            Clase de asociación: <code>Matrimonio</code> entre Persona conyuge1 ↔ Persona conyuge2 (fechaMatrimonio:Fecha).
+            Enumeraciones: TipoDocumento{DNI, LE, LC}, Genero{masculino, femenino}, NivelEstudios{primario, secundario, universitario}, Ambito{municipal, provincial, nacional}.
+          </p>
+
+          <!-- ─── Parte 1 ─────────────────────────────────────────────────── -->
+          <h4>Parte 1 — Valores iniciales (<code>init</code>)</h4>
+
+          <!-- 1 -->
+          <div class="exercise-card">
+            <p><strong>(1)</strong> <span class="badge badge-body">init</span></p>
+            <div class="exercise-statement">
+              <p>Escribir la expresión OCL para el valor inicial del atributo estático <code>maximo</code> de la clase <code>Mesa</code> (valor: 100).</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Mesa::maximo : Integer
+init: 100</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─── Parte 2 ─────────────────────────────────────────────────── -->
+          <h4>Parte 2 — Atributo derivado (<code>derive</code>)</h4>
+
+          <!-- 2 -->
+          <div class="exercise-card">
+            <p><strong>(2)</strong> <span class="badge badge-body">derive</span></p>
+            <div class="exercise-statement">
+              <p>Escribir la expresión OCL para derivar el atributo <code>edad</code> de <code>Persona</code> usando la operación <code>Fecha::años()</code> que devuelve los años entre dos fechas.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Persona::edad : Integer
+derive: self.fechaNac.años(Fecha::hoy())</code></pre></div>
+                <div class="callout">
+                  <p>Se asume que <code>Fecha::hoy()</code> es una operación estática que devuelve la fecha actual, y <code>años(f)</code> calcula los años transcurridos entre la fecha del contexto y la fecha <code>f</code>.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─── Parte 3 ─────────────────────────────────────────────────── -->
+          <h4>Parte 3 — Cuerpo de operaciones de consulta (<code>body</code>)</h4>
+
+          <!-- 3.a -->
+          <div class="exercise-card">
+            <p><strong>(a)</strong> <span class="badge badge-body">body</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Partido::afiliadosActivos(): Set(Afiliado)</code>. Devuelve el conjunto de afiliados activos del partido.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido::afiliadosActivos() : Set(Afiliado)
+body: self.afiliados->select(a | a.activo = true)</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.b -->
+          <div class="exercise-card">
+            <p><strong>(b)</strong> <span class="badge badge-body">body</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Partido::afiliadosInactivos(): Set(Afiliado)</code>. Devuelve los afiliados inactivos.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido::afiliadosInactivos() : Set(Afiliado)
+body: self.afiliados->reject(a | a.activo = true)</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.c -->
+          <div class="exercise-card">
+            <p><strong>(c)</strong> <span class="badge badge-body">body</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Partido::cantidadAfiliados(): Integer</code>. Devuelve la cantidad total de afiliados del partido.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido::cantidadAfiliados() : Integer
+body: self.afiliados->size()</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.d -->
+          <div class="exercise-card">
+            <p><strong>(d)</strong> <span class="badge badge-body">body</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Partido::afiliadosMasculinos(): Set(Afiliado)</code>. Devuelve los afiliados de género masculino.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido::afiliadosMasculinos() : Set(Afiliado)
+body: self.afiliados->select(a | a.genero = Genero::masculino)</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.e -->
+          <div class="exercise-card">
+            <p><strong>(e)</strong> <span class="badge badge-body">body</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Partido::afiliadosFemeninos(): Set(Afiliado)</code>. Devuelve las afiliadas de género femenino.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido::afiliadosFemeninos() : Set(Afiliado)
+body: self.afiliados->select(a | a.genero = Genero::femenino)</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.f -->
+          <div class="exercise-card">
+            <p><strong>(f)</strong> <span class="badge badge-body">body</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Partido::afiliado(n: Integer): Afiliado</code>. Devuelve el afiliado con número de afiliado <code>n</code>.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido::afiliado(n: Integer) : Afiliado
+body: self.afiliados->any(a | a.numAfiliado = n)</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.g -->
+          <div class="exercise-card">
+            <p><strong>(g)</strong> <span class="badge badge-body">body</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Partido::casados(): Set(Afiliado)</code>. Devuelve los afiliados que están casados (tienen al menos un matrimonio registrado).</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido::casados() : Set(Afiliado)
+body: self.afiliados->select(a | a.Matrimonio->notEmpty())</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.h -->
+          <div class="exercise-card">
+            <p><strong>(h)</strong> <span class="badge badge-body">body</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Partido::solteros(): Set(Afiliado)</code>. Devuelve los afiliados que no están casados.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido::solteros() : Set(Afiliado)
+body: self.afiliados->reject(a | a.Matrimonio->notEmpty())</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.i -->
+          <div class="exercise-card">
+            <p><strong>(i)</strong> <span class="badge badge-body">body</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Partido::afiliadosConConyuge(): Set(Tuple(afiliado: Afiliado, conyuge: Persona))</code>. Devuelve tuplas con cada afiliado casado y su cónyuge.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido::afiliadosConConyuge() : Set(Tuple(afiliado: Afiliado, conyuge: Persona))
+body: self.afiliados
+    ->select(a | a.Matrimonio->notEmpty())
+    ->collect(a |
+        let m : Matrimonio = a.Matrimonio->any(true)
+        in Tuple{afiliado = a,
+                 conyuge = if m.conyuge1 = a then m.conyuge2 else m.conyuge1 endif})
+    ->asSet()</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.j -->
+          <div class="exercise-card">
+            <p><strong>(j)</strong> <span class="badge badge-body">body</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Partido::afiliadosOrdenadosPorFecha(): Sequence(Afiliado)</code>. Devuelve los afiliados ordenados por fecha de afiliación (más antiguos primero).</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido::afiliadosOrdenadosPorFecha() : Sequence(Afiliado)
+body: self.afiliados->sortedBy(a | a.fechaAfiliacion)</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.k -->
+          <div class="exercise-card">
+            <p><strong>(k)</strong> <span class="badge badge-body">body</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Circuito::personasPorMesa(): Set(Tuple(mesa: Mesa, cantidad: Integer))</code>. Devuelve tuplas con cada mesa y su cantidad de electores.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Circuito::personasPorMesa() : Set(Tuple(mesa: Mesa, cantidad: Integer))
+body: self.mesas->collect(m |
+          Tuple{mesa = m, cantidad = m.electores->size()})
+      ->asSet()</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.l -->
+          <div class="exercise-card">
+            <p><strong>(l)</strong> <span class="badge badge-body">body</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Partido::electoresPorCircuito(c: Circuito): Set(Persona)</code>. Devuelve los electores del partido que están en alguna mesa del circuito dado.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido::electoresPorCircuito(c: Circuito) : Set(Persona)
+body: self.electores->select(p |
+          c.mesas->exists(m | m.electores->includes(p)))</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.m -->
+          <div class="exercise-card">
+            <p><strong>(m)</strong> <span class="badge badge-body">body</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Partido::afiliadosConEstudiosUniversitarios(): Set(Afiliado)</code>. Devuelve afiliados con nivel de estudios universitario.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido::afiliadosConEstudiosUniversitarios() : Set(Afiliado)
+body: self.afiliados->select(a | a.estudios = NivelEstudios::universitario)</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.n -->
+          <div class="exercise-card">
+            <p><strong>(n)</strong> <span class="badge badge-body">body</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Partido::presidenteValido(): Boolean</code>. Devuelve <code>true</code> si el presidente es un afiliado activo del partido.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido::presidenteValido() : Boolean
+body: self.presidente.activo = true and
+      self.afiliados->includes(self.presidente)</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─── Parte 4 ─────────────────────────────────────────────────── -->
+          <h4>Parte 4 — Invariantes</h4>
+
+          <!-- 4.a -->
+          <div class="exercise-card">
+            <p><strong>(a)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>El tipo de documento de una persona debe ser coherente con su género: las mujeres no pueden tener LE (Libreta de Enrolamiento).</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Persona
+inv documentoCoherente:
+    self.genero = Genero::femenino implies
+        self.tipoDoc &lt;> TipoDocumento::LE</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4.b -->
+          <div class="exercise-card">
+            <p><strong>(b)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>No se permiten matrimonios registrados después del año 2010. (La clase <code>Matrimonio</code> tiene <code>fechaMatrimonio: Fecha</code>; asumir que <code>Fecha</code> tiene operación <code>anio(): Integer</code>.)</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Matrimonio
+inv matrimonioAnterior2010: self.fechaMatrimonio.anio() &lt;= 2010</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4.c -->
+          <div class="exercise-card">
+            <p><strong>(c)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>El presidente de un partido debe tener estudios universitarios.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido
+inv presidenteUniversitario:
+    self.presidente.estudios = NivelEstudios::universitario</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4.d -->
+          <div class="exercise-card">
+            <p><strong>(d)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>Para votar, una persona debe tener al menos 16 años.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Mesa
+inv electorMayorEdad:
+    self.electores->forAll(p | p.edad >= 16)</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4.e -->
+          <div class="exercise-card">
+            <p><strong>(e)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>Una mesa no puede tener más electores que su máximo permitido.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Mesa
+inv limiteElectores: self.electores->size() &lt;= self.maximo</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4.f -->
+          <div class="exercise-card">
+            <p><strong>(f)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>El domicilio de cada elector de una mesa debe estar dentro del circuito al que pertenece esa mesa. (Simplificación: el circuito tiene una operación <code>contieneElector(p: Persona): Boolean</code>.)</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Circuito
+inv electorEnCircuito:
+    self.mesas->forAll(m |
+        m.electores->forAll(p | self.contieneElector(p)))</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4.g -->
+          <div class="exercise-card">
+            <p><strong>(g)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-inv">inv</span></p>
+            <div class="exercise-statement">
+              <p>El número de afiliado de cada afiliado debe ser único dentro del partido.</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido
+inv numerosUnicos:
+    self.afiliados->isUnique(a | a.numAfiliado)</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4.h -->
+          <div class="exercise-card">
+            <p><strong>(h)</strong> <span class="badge badge-inv">inv</span> — Herencia / Principio de Liskov</p>
+            <div class="exercise-statement">
+              <p>Analizá: si <code>Afiliado</code> es subclase de <code>Persona</code>, ¿qué relación tienen sus invariantes? ¿Puede <code>Afiliado</code> tener un invariante que contradiga uno de <code>Persona</code>?</p>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <p>No puede contradecirlo. Por el <strong>principio de sustitución de Liskov</strong>, los invariantes se <strong>heredan</strong>: toda instancia de <code>Afiliado</code> debe cumplir los invariantes de <code>Persona</code> <em>y</em> los propios de <code>Afiliado</code>. Un invariante de <code>Afiliado</code> puede <strong>agregar</strong> restricciones pero nunca relajarlas ni contradecirlas.</p>
+                <div class="callout">
+                  <p>Ejemplo: si <code>Persona</code> tiene <code>inv: self.edad &gt;= 0</code>, <code>Afiliado</code> puede agregar <code>inv: self.edad &gt;= 18</code> (más restrictivo), pero <strong>no</strong> puede poner <code>inv: self.edad &gt;= 0 or self.edad = -1</code> (que sería más permisivo).</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─── Parte 5 ─────────────────────────────────────────────────── -->
+          <h4>Parte 5 — Design by Contract (pre/post condiciones)</h4>
+
+          <!-- 5.a -->
+          <div class="exercise-card">
+            <p><strong>(a)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-pre">pre</span> <span class="badge badge-post">post</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Partido::afiliar(p: Persona)</code>. Afilia a una persona al partido.</p>
+              <ul>
+                <li><strong>Pre:</strong> la persona no está afiliada y tiene al menos 16 años.</li>
+                <li><strong>Post:</strong> el conjunto de afiliados aumentó en uno con el nuevo afiliado.</li>
+              </ul>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido::afiliar(p: Persona)
+pre  noAfiliado:    not self.afiliados->exists(a | a.oclAsType(Persona) = p)
+pre  personaValida: p.edad >= 16
+
+post afiliadoIncluido:
+    self.afiliados->size() = self.afiliados@pre->size() + 1
+post nuevoAfiliado:
+    self.afiliados->exists(a | a.oclAsType(Persona) = p)</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5.b -->
+          <div class="exercise-card">
+            <p><strong>(b)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-pre">pre</span> <span class="badge badge-post">post</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Partido::desafiliar(a: Afiliado)</code>. Desafilia a un afiliado (lo marca como inactivo).</p>
+              <ul>
+                <li><strong>Pre:</strong> el afiliado existe y está activo.</li>
+                <li><strong>Post:</strong> el afiliado queda inactivo; el resto no cambia.</li>
+              </ul>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido::desafiliar(a: Afiliado)
+pre  esAfiliado: self.afiliados->includes(a)
+pre  estaActivo: a.activo = true
+
+post inactivo:        a.activo = false
+post mismoTamanio:    self.afiliados->size() = self.afiliados@pre->size()
+post otrosSinCambios:
+    self.afiliados->select(x | x &lt;> a)->forAll(x | x.activo = x.activo@pre)</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5.c -->
+          <div class="exercise-card">
+            <p><strong>(c)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-pre">pre</span> <span class="badge badge-post">post</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Partido::cambiarPresidencia(nuevo: Afiliado)</code>. Cambia el presidente del partido.</p>
+              <ul>
+                <li><strong>Pre:</strong> el nuevo presidente es afiliado activo y tiene estudios universitarios.</li>
+                <li><strong>Post:</strong> el presidente es el nuevo afiliado.</li>
+              </ul>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Partido::cambiarPresidencia(nuevo: Afiliado)
+pre  esAfiliado:   self.afiliados->includes(nuevo)
+pre  estaActivo:   nuevo.activo = true
+pre  tieneEstudios: nuevo.estudios = NivelEstudios::universitario
+
+post nuevoPresidente:  self.presidente = nuevo
+post sinOtrosCambios:  self.afiliados = self.afiliados@pre</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5.d -->
+          <div class="exercise-card">
+            <p><strong>(d)</strong> <span class="badge badge-nl2ocl">Natural → OCL</span> <span class="badge badge-pre">pre</span> <span class="badge badge-post">post</span></p>
+            <div class="exercise-statement">
+              <p>Operación <code>Circuito::inscribirElector(m: Mesa, p: Persona)</code>. Inscribe un elector en una mesa del circuito.</p>
+              <ul>
+                <li><strong>Pre:</strong> la mesa pertenece al circuito, la persona no está ya inscripta en esa mesa, y la mesa no está llena.</li>
+                <li><strong>Post:</strong> la persona es parte de los electores de la mesa.</li>
+              </ul>
+            </div>
+            <div class="spoiler">
+              <button class="spoiler-btn" onclick="toggleSpoiler(this)">Ver solución</button>
+              <div class="spoiler-content">
+                <div class="code-block"><pre><code class="language-ocl">context Circuito::inscribirElector(m: Mesa, p: Persona)
+pre  mesaEnCircuito:  self.mesas->includes(m)
+pre  noInscripto:     not m.electores->includes(p)
+pre  mesaDisponible:  m.electores->size() &lt; m.maximo
+
+post inscripto:      m.electores->includes(p)
+post tamanioCrecio:  m.electores->size() = m.electores@pre->size() + 1</code></pre></div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+      </main>
+    </div><!-- /.content-inner if present -->
+  </div><!-- /.page-wrapper -->
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       JAVASCRIPT
+  ═══════════════════════════════════════════════════════ -->
+  <script>
+    /* ─── Copy-to-clipboard ─── */
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block-wrapper').querySelector('pre');
+      const text = pre.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '¡Copiado!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copiar';
+          btn.classList.remove('copied');
+        }, 1800);
+      }).catch(() => {
+        /* Fallback for browsers without clipboard API */
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = '¡Copiado!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copiar';
+          btn.classList.remove('copied');
+        }, 1800);
+      });
+    }
+
+    /* ─── Active sidebar link on scroll ─── */
+    (function () {
+      const sidebarLinks = Array.from(document.querySelectorAll('.sidebar nav a'));
+      const sections     = Array.from(document.querySelectorAll('main section[id]'));
+      const headerH      = parseInt(getComputedStyle(document.documentElement)
+                             .getPropertyValue('--header-h')) || 60;
+
+      function onScroll() {
+        const scrollY = window.scrollY + headerH + 32;
+        let current   = sections[0];
+
+        for (const sec of sections) {
+          if (sec.offsetTop <= scrollY) current = sec;
+        }
+
+        sidebarLinks.forEach(a => {
+          a.classList.toggle(
+            'active',
+            a.getAttribute('href') === '#' + current.id
+          );
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    })();
+
+    /* ─── Search / filter ─── */
+    (function () {
+      const input    = document.getElementById('search');
+      const sections = Array.from(document.querySelectorAll('main section[id]'));
+
+      function normalize(s) {
+        return s.toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+      }
+
+      input.addEventListener('input', function () {
+        const q = normalize(this.value.trim());
+
+        if (!q) {
+          sections.forEach(s => {
+            s.classList.remove('search-hidden');
+            /* Remove previous highlights */
+            s.querySelectorAll('mark.search-match').forEach(m => {
+              m.replaceWith(document.createTextNode(m.textContent));
+            });
+          });
+          return;
+        }
+
+        sections.forEach(sec => {
+          const text    = normalize(sec.getAttribute('data-search-text') || '');
+          const heading = normalize(sec.querySelector('h2, h1')?.textContent || '');
+          const body    = normalize(sec.textContent);
+
+          const matches = text.includes(q) || heading.includes(q) || body.includes(q);
+          sec.classList.toggle('search-hidden', !matches);
+        });
+      });
+    })();
+  </script>
+
+  <script>
+  // Eye SVG icon
+  const EYE_OPEN = `<svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+  const EYE_SHUT = `<svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+
+  // Inject eye icon into all spoiler buttons on load
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.spoiler-btn').forEach(btn => {
+      btn.innerHTML = EYE_OPEN + ' Ver solución';
+    });
+  });
+
+  function toggleSpoiler(btn) {
+      const content = btn.nextElementSibling;
+      const isOpen = content.classList.contains('open');
+      content.classList.toggle('open', !isOpen);
+      btn.innerHTML = (isOpen ? EYE_OPEN + ' Ver solución' : EYE_SHUT + ' Ocultar solución');
+      btn.classList.toggle('active', !isOpen);
+  }
+  </script>
+
+  <!-- Prism.js syntax highlighting -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script>
+  // OCL language definition for Prism.js
+  Prism.languages.ocl = {
+    'comment': { pattern: /--.*/, greedy: true },
+    'string':  { pattern: /'[^']*'/, greedy: true },
+    'keyword': /\b(?:context|inv|pre|post|init|derive|body|self|result|if|then|else|endif|let|in|and|or|not|xor|implies|true|false|null|invalid)\b/,
+    'ocl-type': /\b(?:Integer|Real|String|Boolean|Set|Bag|Sequence|OrderedSet|Tuple|OclAny|OclVoid|OclInvalid|UnlimitedNatural)\b/,
+    'ocl-op': /\b(?:allInstances|oclIsTypeOf|oclIsKindOf|oclAsType|oclIsUndefined|oclIsNew|oclIsInState)\b/,
+    'collection-op': /\b(?:size|isEmpty|notEmpty|includes|excludes|includesAll|excludesAll|select|reject|collect|forAll|exists|one|any|isUnique|sortedBy|flatten|union|intersection|including|excluding|symmetricDifference|asSet|asBag|asSequence|asOrderedSet|sum|min|max|count|first|last|at|indexOf|append|prepend|subSequence)\b(?=\s*\(|->\s*\()/,
+    'at-pre': { pattern: /@pre\b/, alias: 'builtin' },
+    'number': /\b\d+(?:\.\d+)?\b/,
+    'operator': /::|-?>?|[=<>!]=?|[+\-*\/|]/,
+    'punctuation': /[{}[\]();,:.]/
+  };
+  Prism.highlightAll();
+  </script>
+</body>
+</html>
