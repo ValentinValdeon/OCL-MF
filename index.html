@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OCL Reference — Métodos Formales</title>
+  <meta name="theme-color" content="#ffffff" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Nunito:wght@300;400;500;600;700&family=Source+Code+Pro:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
@@ -81,7 +82,7 @@
       display: flex;
       align-items: center;
       gap: 1.25rem;
-      padding: 0 1.5rem;
+      padding: 0 max(1.5rem, env(safe-area-inset-right)) 0 max(1.5rem, env(safe-area-inset-left));
     }
 
     .logo {
@@ -130,6 +131,13 @@
 
     #search::placeholder { color: var(--text-muted); }
 
+    #search:focus-visible {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(45,106,79,.2);
+      outline: none;
+    }
+
+    /* Fallback for browsers that don't support :focus-visible */
     #search:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(45,106,79,.12);
@@ -215,11 +223,18 @@
       border-left: 3px solid transparent;
       transition: color var(--transition), background var(--transition), border-color var(--transition);
       line-height: 1.4;
+      touch-action: manipulation;
     }
 
     .sidebar nav a:hover {
       color: var(--primary);
       background: rgba(45,106,79,.12);
+    }
+
+    .sidebar nav a:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: -2px;
+      border-radius: 2px;
     }
 
     .sidebar nav a.active {
@@ -493,14 +508,20 @@
       font-weight: 600;
       padding: .2rem .55rem;
       cursor: pointer;
-      transition: all var(--transition);
+      transition: border-color var(--transition), color var(--transition), background var(--transition);
       letter-spacing: .02em;
+      touch-action: manipulation;
     }
 
     .copy-btn:hover {
       border-color: #89b4fa;
       color: #89b4fa;
       background: rgba(137,180,250,.08);
+    }
+
+    .copy-btn:focus-visible {
+      outline: 2px solid #89b4fa;
+      outline-offset: 2px;
     }
 
     .copy-btn.copied {
@@ -770,6 +791,23 @@
       clip: rect(0,0,0,0); white-space: nowrap; border: 0;
     }
 
+    .skip-link:focus-visible {
+      position: fixed;
+      top: .5rem; left: .5rem;
+      width: auto; height: auto;
+      padding: .5rem 1rem;
+      clip: auto;
+      white-space: normal;
+      background: var(--primary);
+      color: #fff;
+      border-radius: var(--radius);
+      font-size: .875rem;
+      font-weight: 700;
+      z-index: 9999;
+      outline: 3px solid #fff;
+      outline-offset: 2px;
+    }
+
     .divider {
       height: 1px;
       background: var(--border);
@@ -833,8 +871,14 @@
         border-bottom: 3px solid transparent;
         padding: .35rem .55rem;
         white-space: nowrap;
-        font-size: 0;          /* hide text */
         background: transparent;
+      }
+
+      .sidebar nav a .nav-text {
+        display: inline-block;
+        position: absolute; width: 1px; height: 1px;
+        padding: 0; margin: -1px; overflow: hidden;
+        clip: rect(0,0,0,0); white-space: nowrap; border: 0;
       }
 
       .sidebar nav a .nav-num {
@@ -999,6 +1043,7 @@
       font-weight: 600;
       cursor: pointer;
       transition: background .15s, color .15s;
+      touch-action: manipulation;
     }
     .spoiler-btn .eye-icon {
       width: 14px;
@@ -1011,6 +1056,10 @@
       background: var(--primary);
       color: #fff;
     }
+    .spoiler-btn:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
     .spoiler-btn.active .eye-icon path { stroke: #fff; }
     .spoiler-content {
       overflow: hidden;
@@ -1020,13 +1069,17 @@
       border-top: none;
       transition: max-height .35s ease, margin-top .2s ease, padding-top .2s ease;
     }
+    @media (prefers-reduced-motion: reduce) {
+      .spoiler-content {
+        transition: none;
+      }
+    }
     .spoiler-content.open {
       max-height: 4000px;
       margin-top: .75rem;
       padding-top: .75rem;
       border-top: 1px dashed var(--border);
     }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 
     .badge {
       display: inline-block;
@@ -1070,6 +1123,8 @@
 
 <body>
 
+  <a href="#main-content" class="skip-link sr-only">Saltar al contenido principal</a>
+
   <!-- ═══════════════════════════════════════════════════════
        HEADER
   ═══════════════════════════════════════════════════════ -->
@@ -1078,7 +1133,7 @@
       <div class="logo-name">OCL<span>·</span>Reference</div>
       <span class="logo-tag">Object Constraint Language</span>
     </div>
-    <input type="text" id="search" placeholder="Buscar en la referencia…" aria-label="Buscar secciones" />
+    <input type="search" id="search" placeholder="Buscar en la referencia…" aria-label="Buscar secciones" autocomplete="off" spellcheck="false" />
     <span class="subtitle">Métodos Formales · Ingeniería en Informática</span>
   </header>
 
@@ -1093,22 +1148,22 @@
     <aside class="sidebar" aria-label="Navegación de secciones">
       <div class="sidebar-label">Contenidos</div>
       <nav>
-        <a href="#intro"       class="active"><span class="nav-num">§1</span> Introducción</a>
-        <a href="#sintaxis"             ><span class="nav-num">§2</span> Sintaxis Básica</a>
-        <a href="#tipos"                ><span class="nav-num">§3</span> Tipos OCL</a>
-        <a href="#colecciones"          ><span class="nav-num">§4</span> Operaciones de Colección</a>
-        <a href="#navegacion"           ><span class="nav-num">§5</span> Navegación</a>
-         <a href="#herencia"             ><span class="nav-num">§6</span> Herencia y DBC</a>
-         <a href="#chuleta"              ><span class="nav-num">§7</span> Hoja Chuleta</a>
-         <a href="#tips"                 ><span class="nav-num">§8</span> Tips OCL ↔ Natural</a>
-         <a href="#ejercicios"           ><span class="nav-num">§9</span> Ejercicios Prácticos</a>
+        <a href="#intro"       class="active"><span class="nav-num">§1</span> <span class="nav-text">Introducción</span></a>
+        <a href="#sintaxis"             ><span class="nav-num">§2</span> <span class="nav-text">Sintaxis Básica</span></a>
+        <a href="#tipos"                ><span class="nav-num">§3</span> <span class="nav-text">Tipos OCL</span></a>
+        <a href="#colecciones"          ><span class="nav-num">§4</span> <span class="nav-text">Operaciones de Colección</span></a>
+        <a href="#navegacion"           ><span class="nav-num">§5</span> <span class="nav-text">Navegación</span></a>
+         <a href="#herencia"             ><span class="nav-num">§6</span> <span class="nav-text">Herencia y DBC</span></a>
+         <a href="#chuleta"              ><span class="nav-num">§7</span> <span class="nav-text">Hoja Chuleta</span></a>
+         <a href="#tips"                 ><span class="nav-num">§8</span> <span class="nav-text">Tips OCL ↔ Natural</span></a>
+         <a href="#ejercicios"           ><span class="nav-num">§9</span> <span class="nav-text">Ejercicios Prácticos</span></a>
       </nav>
     </aside>
 
     <!-- ─────────────────────────────────────────────────────
          MAIN CONTENT
     ───────────────────────────────────────────────────── -->
-    <main class="content">
+    <main class="content" id="main-content">
       <div class="content-inner">
 
 
